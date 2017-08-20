@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    card_view:cardCornerRadius="1dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/vehicle_name_card_view_layout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vehicle_name_home_text_view"
+                android:layout_toStartOf="@+id/next_logo"
+                android:layout_alignParentStart="true"
+                android:text="@string/driver_s_name"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/next_logo"
+                android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vehicle_name_card_view_layout"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:baselineAligned="false"
+            android:id="@+id/trip_info_container">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/journey_info_container"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_location_on_black_24dp"
+                    android:id="@+id/location_icon"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/journey"
+                    android:layout_toEndOf="@id/location_icon"
+                    android:layout_centerVertical="true"
+                    android:padding="3dp"
+                    android:maxLines="1"
+                    android:textSize="13sp"
+                    android:id="@+id/displacement_home_card_view"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/driver_info_container"
+                android:layout_weight="1"
+                android:gravity="end">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_drive_eta_black_24dp"
+                    android:id="@+id/driving_logo"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/driver_s_name"
+                    android:layout_toEndOf="@id/driving_logo"
+                    android:layout_centerVertical="true"
+                    android:padding="3dp"
+                    android:textSize="13sp"
+                    android:id="@+id/driver_s_name_home_card_view"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/trip_info_container"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/date_info_container"
+                android:layout_weight="2">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_access_time_black_24dp"
+                    android:id="@+id/time_icon"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/journey"
+                    android:layout_toEndOf="@id/time_icon"
+                    android:layout_centerVertical="true"
+                    android:padding="3dp"
+                    android:maxLines="1"
+                    android:textSize="12sp"
+                    android:id="@+id/date_and_time_home_card_view"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/passenger_info_container"
+                android:layout_weight="1"
+                android:gravity="end">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_people_outline_black_24dp"
+                    android:id="@+id/people"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/driver_s_name"
+                    android:layout_toEndOf="@id/people"
+                    android:layout_centerVertical="true"
+                    android:padding="3dp"
+                    android:textSize="12sp"
+                    android:id="@+id/total_number_of_passengers_home_card_view"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

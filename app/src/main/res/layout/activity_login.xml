@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="i.am.eipeks.rims._authentication.Login"
+    android:background="@drawable/background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/app_bar_login_page"
+        android:background="@color/background_color">
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/rims_icon"
+            android:contentDescription="@string/rims_icon"
+            android:id="@+id/rims_icon_login_page"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/login_to_continue"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/rims_icon_login_page"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/login_to_continue"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/login_to_continue"
+            android:textColorHint="@android:color/white"
+            android:theme="@style/EditTextStyleLogin"
+            android:id="@+id/identification_number_input_layout">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="number"
+                android:hint="@string/identification_number"
+                android:id="@+id/identification_number"
+                android:textColor="@android:color/white"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/identification_number_input_layout"
+            android:textColorHint="@android:color/white"
+            android:id="@+id/password_input_layout"
+            android:theme="@style/EditTextStyleLogin">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:hint="@string/password"
+                android:id="@+id/password"
+                android:textColor="@android:color/white"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/password_input_layout"
+            android:layout_marginTop="15dp"
+            android:text="@string/login"
+            android:textSize="20sp"
+            android:id="@+id/login_button"/>
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/login_button"
+            android:layout_marginTop="5dp"
+            android:text="@string/forgot_password"
+            android:textSize="15sp"
+            android:id="@+id/forgot_password_button"
+            android:textAllCaps="false"/>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:id="@+id/app_bar_login_page">
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/frsc"
+                android:contentDescription="@string/rims_icon"
+                android:layout_weight="1"
+                android:layout_margin="5dp" />
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/mtn"
+                android:contentDescription="@string/rims_icon"
+                android:layout_weight="1"
+                android:layout_margin="5dp"/>
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/liberty"
+                android:contentDescription="@string/rims_icon"
+                android:layout_weight="1"
+                android:layout_margin="5dp"/>
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/nurtw"
+                android:contentDescription="@string/rims_icon"
+                android:layout_weight="1"
+                android:layout_margin="5dp"/>
+
+        </LinearLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_transparent"
+        android:visibility="gone"
+        android:id="@+id/loading_layout">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/rims_icon"
+            android:contentDescription="@string/rims_icon"
+            android:id="@+id/rims_custom_loading"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rims_custom_loading"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:text="@string/loading"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textColor="@android:color/white"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

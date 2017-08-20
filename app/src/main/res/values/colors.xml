@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fab73f</color>
+    <color name="colorPrimaryDark">#f18809</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background_color">#90f18614</color>
+    <color name="ash">#aaaaaa</color>
+    <color name="ash_button_selector">#eeeeee</color>
+    <color name="black_transparent">#90000000</color>
+    <color name="tab_selected_text_color">#f9f3e8</color>
+    <color name="brown_background">#6e4210</color>
+    <color name="red_mint_background">#b63f2a</color>
+</resources>

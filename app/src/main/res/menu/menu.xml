@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="@string/home"
+        android:id="@+id/home_menu_item"
+        android:icon="@drawable/ic_home_black_24dp"
+        app:showAsAction="withText"/>
+
+    <item
+        android:title="@string/dashboard"
+        android:id="@+id/dashboard_menu_item"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        app:showAsAction="withText"/>
+
+    <item
+        android:title="@string/add_a_trip"
+        android:id="@+id/add_a_trip_menu_item"
+        android:icon="@drawable/ic_add_black_24dp"
+        app:showAsAction="withText"/>
+
+    <item
+        android:title="@string/help_amp_feedback"
+        android:id="@+id/feedback_menu_item"
+        android:icon="@drawable/ic_help_black_24dp"
+        app:showAsAction="withText" />
+
+    <item
+        android:title="@string/terms_and_conditions"
+        android:id="@+id/terms_menu_item"
+        android:icon="@drawable/ic_feedback_black_24dp"
+        app:showAsAction="withText"/>
+
+</menu>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/count_bar"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textSize="30sp"
+                android:fontFamily="cursive"
+                android:textStyle="bold"
+                android:id="@+id/seat_count"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" of "
+                android:textSize="30sp"
+                android:fontFamily="cursive"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="18"
+                android:textSize="30sp"
+                android:fontFamily="cursive"
+                android:textStyle="bold"
+                android:id="@+id/capacity"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/count_bar"
+            android:padding="10dp"
+            android:id="@+id/information_layout">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passenger_s_name_input_layout"
+                android:textColorHint="@color/ash">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/passenger_s_name"
+                    android:theme="@style/EditTextStyleJourney"
+                    android:id="@+id/passenger_s_name"
+                    android:textColor="@android:color/black"
+                    android:inputType="textPersonName"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passenger_s_phone_number_input_layout"
+                android:textColorHint="@color/ash"
+                android:layout_below="@id/passenger_s_name_input_layout">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/passenger_s_phone"
+                    android:theme="@style/EditTextStyleJourney"
+                    android:id="@+id/passenger_s_phone_number"
+                    android:textColor="@android:color/black"
+                    android:inputType="phone"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passenger_s_address_input_layout"
+                android:textColorHint="@color/ash"
+                android:layout_below="@id/passenger_s_phone_number_input_layout">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/address"
+                    android:theme="@style/EditTextStyleJourney"
+                    android:id="@+id/passenger_s_address"
+                    android:textColor="@android:color/black"
+                    android:inputType="text"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/passenger_s_address_input_layout"
+                android:id="@+id/group">
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:orientation="horizontal"
+                    android:id="@+id/sex"
+                    android:padding="5dp"
+                    android:layout_centerVertical="true">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/male"
+                        android:id="@+id/male"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/female"
+                        android:layout_marginStart="20dp"
+                        android:id="@+id/female"/>
+
+                </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/sex"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="horizontal"
+                    android:layout_centerVertical="true"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/seat"
+                        android:textSize="17sp"
+                        android:padding="10dp"
+                        android:textStyle="bold"/>
+
+                    <Spinner
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/seat_number"
+                        android:spinnerMode="dropdown"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/kin_s_name_input_layout"
+                android:textColorHint="@color/ash"
+                android:layout_below="@id/group">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/next_of_kin_s_name"
+                    android:theme="@style/EditTextStyleJourney"
+                    android:id="@+id/kin_s_name"
+                    android:textColor="@android:color/black"
+                    android:inputType="textPersonName"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/kin_s_phone_input_layout"
+                android:textColorHint="@color/ash"
+                android:layout_below="@id/kin_s_name_input_layout">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/next_of_kin_s_phone"
+                    android:theme="@style/EditTextStyleJourney"
+                    android:id="@+id/kin_s_phone"
+                    android:textColor="@android:color/black"
+                    android:inputType="phone"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_below="@id/information_layout"
+            android:padding="10dp">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_background_one"
+                android:textColor="@android:color/white"
+                android:onClick="gotoReview"
+                android:text="@string/review"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

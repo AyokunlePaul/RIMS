@@ -1,0 +1,109 @@
+<resources>
+    <string name="app_name">RIMS</string>
+    <string name="rims_icon">RIMS</string>
+    <string name="welcome">Welcome to RIMS</string>
+    <string name="welcome_message">Road Incident Management System\n
+    that allows passengers access real\n
+    time emergency services whenever,\n
+    wherever!</string>
+    <string name="get_started">GET STARTED</string>
+    <string name="login_to_continue">Login to continue</string>
+    <string name="identification_number">Identification Number</string>
+    <string name="password">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="vehicle_number">Vehicle Number</string>
+    <string name="route_from">Route from</string>
+    <string name="route_to">Route to</string>
+    <string name="driver_s_name">Driver\'s name</string>
+    <string name="driver_s_phone">Driver\'s phone</string>
+    <string name="loading">Loading…</string>
+    <string name="make">Make:</string>
+    <string name="capacity">Capacity:</string>
+    <string name="weight">Max Weight:</string>
+    <string name="engine">Engine:</string>
+    <string name="rt_sss">RT-SSS:</string>
+    <string name="continue_button_text">Continue</string>
+    <string name="passenger_s_name">Passenger\'s name</string>
+    <string name="passenger_s_phone">Passenger\'s Phone Number</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="address">Address</string>
+
+    <string-array name="departure_states">
+        <item>Lagos</item>
+        <item>Osun</item>
+        <item>Ondo</item>
+    </string-array>
+
+    <string-array name="lagos_parks">
+        <item>Ikeja</item>
+        <item>Badagry</item>
+        <item>Ikotun</item>
+        <item>Yaba</item>
+        <item>Ojota</item>
+        <item>Egbe</item>
+    </string-array>
+
+    <string-array name="osun_parks">
+        <item>Osogbo</item>
+        <item>Ile Ife</item>
+        <item>Ede</item>
+        <item>Ilesha</item>
+        <item>Mayfair</item>
+        <item>Sabo</item>
+    </string-array>
+
+    <string-array name="ondo_parks">
+        <item>Oba Adesida</item>
+        <item>Ilesa Garage</item>
+        <item>Old Garage</item>
+        <item>Government House</item>
+        <item>State Library</item>
+        <item>St. Peters</item>
+        <item>Alade</item>
+        <item>MTD</item>
+        <item>Methodist</item>
+        <item>Atosin</item>
+        <item>Ojota</item>
+    </string-array>
+
+    <string-array name="select_lga">
+        <item>Select LGA</item>
+    </string-array>
+
+    <string-array name="select_park">
+        <item>Select Park</item>
+    </string-array>
+
+    <string-array name="route">
+        <item>Select</item>
+    </string-array>
+    <string name="title_activity_home">Home</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="journey">Lagos - Kaduna</string>
+    <string name="cancel">CANCEL</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="help_amp_feedback"><![CDATA[Help & Feedback]]></string>
+    <string name="add_a_trip">Add a Trip</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="home">Home</string>
+    <string name="next_of_kin_s_name">Next of Kin\'s Name</string>
+    <string name="next_of_kin_s_phone">Next of kin\'s Phone</string>
+    <string name="next">Next</string>
+    <string name="review">Review</string>
+    <string name="seat">Seat</string>
+    <string name="requesting">Requesting...</string>
+    <string name="address_card_view">No. 65, Broad Street Idanre, Ondo State.</string>
+    <string name="send">Send</string>
+    <string name="delete">Delete</string>
+    <string name="no_trips_yet">No trips yet</string>
+
+</resources>
