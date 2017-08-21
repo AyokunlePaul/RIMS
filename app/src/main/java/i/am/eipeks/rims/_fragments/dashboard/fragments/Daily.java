@@ -50,5 +50,4 @@ public class Daily extends Fragment {
 
         return dailyView;
     }
-
 }
