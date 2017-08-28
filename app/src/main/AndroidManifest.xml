@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <permission android:name="i.am.eipeks.RMIS_PERMISSION"/>
+    <permission android:name="i.am.eipeks.RMIS_PERMISSION" />
 
     <application
         android:allowBackup="true"
@@ -22,20 +22,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="._authentication.Login"
-            android:noHistory="true"/>
         <activity
-            android:name="._activities.RegisterPassenger"/>
+            android:name="._authentication.Login"
+            android:noHistory="true" />
+        <activity android:name="._activities.RegisterPassenger" />
         <activity
             android:name="._activities.Main"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name="._activities.TripInformation"
-            android:parentActivityName="._activities.Main"/>
-        <activity android:name="._activities.RegisterReview"
-            android:parentActivityName="._activities.RegisterPassenger"/>
-        <activity android:name="._activities.HomeReview"
-            android:parentActivityName="._activities.Main"/>
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="._activities.TripInformation"
+            android:parentActivityName="._activities.Main" />
+        <activity
+            android:name="._activities.RegisterReview"
+            android:parentActivityName="._activities.RegisterPassenger" />
+        <activity
+            android:name="._activities.HomeReview"
+            android:parentActivityName="._activities.Main" />
+        <activity android:name="._activities.Test"></activity>
     </application>
 
 </manifest>

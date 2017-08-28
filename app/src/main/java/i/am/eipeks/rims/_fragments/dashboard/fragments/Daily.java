@@ -31,8 +31,8 @@ public class Daily extends Fragment {
 
         lineChart = (LineChart) dailyView.findViewById(R.id.line_chart);
 
-        int[] x_entries = {0,1,2,3,4,5,6,7,8,9};
-        int[] y_entries = {0,1,2,3,4,5,6,7,8,9};
+        int[] x_entries = {-2,-1,0,1,2,3,4,5,6,7};
+        int[] y_entries = {20,12,6,2,0,0,2,6,12,20};
 
         List<Entry> entries = new ArrayList<>();
 

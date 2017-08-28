@@ -49,7 +49,7 @@ public class RegisterReview extends AppCompatActivity{
     private Trip trip;
     private Driver driver;
 
-    @SuppressLint("NewApi")
+    @SuppressWarnings("NullPointerException")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

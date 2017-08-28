@@ -105,5 +105,7 @@
     <string name="send">Send</string>
     <string name="delete">Delete</string>
     <string name="no_trips_yet">No trips yet</string>
+    <string name="collapsing_toolbar">Collapsing Toolbar</string>
+    <string name="type">Type</string>
 
 </resources>
