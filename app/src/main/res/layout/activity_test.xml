@@ -14,6 +14,14 @@
         android:textColorHint="@color/ash"
         android:layout_centerInParent="true"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/click_me"
+        android:layout_below="@id/test_type"
+        android:layout_marginTop="20dp"
+        android:text="@string/click_me"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

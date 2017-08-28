@@ -107,5 +107,6 @@
     <string name="no_trips_yet">No trips yet</string>
     <string name="collapsing_toolbar">Collapsing Toolbar</string>
     <string name="type">Type</string>
+    <string name="click_me">Click Me!!!</string>
 
 </resources>
