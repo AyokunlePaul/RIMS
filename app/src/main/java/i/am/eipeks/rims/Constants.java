@@ -14,5 +14,6 @@ public interface Constants {
     String INTENT_TRIP_INFORMATION_JOURNEY = "trip";
     String INTENT_DRIVER_INFORMATION_JOURNEY = "driver";
     String INTENT_VEHICLE_INFORMATION_JOURNEY = "vehicle";
+    String LAST_ITEM_OUT_STATE = "last Item";
 
 }

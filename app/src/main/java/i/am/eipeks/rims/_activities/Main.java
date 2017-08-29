@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._authentication.Session;
 import i.am.eipeks.rims._fragments.dashboard.Dashboard;
@@ -29,11 +30,14 @@ import i.am.eipeks.rims._fragments.Terms;
 public class Main extends AppCompatActivity implements
         View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener ,
-        Home.GoToTrip{
+        Home.GoToTrip,
+        Terms.ConfigureTheme{
 
     private ActionBarDrawerToggle toggle;
 
     private DrawerLayout drawerLayout;
+
+    private int currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +58,8 @@ public class Main extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
-        TextView owner_s_info = (TextView) navigationView.getHeaderView(0).findViewById(R.id.owner_s_name);
-        TextView owner_s_id = (TextView) navigationView.getHeaderView(0).findViewById(R.id.owner_s_id);
+        TextView owner_s_info = navigationView.getHeaderView(0).findViewById(R.id.owner_s_name);
+        TextView owner_s_id = navigationView.getHeaderView(0).findViewById(R.id.owner_s_id);
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -75,27 +79,9 @@ public class Main extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null){
-            selectItem(R.id.home_menu_item);
+            currentItem = R.id.home_menu_item;
+            selectItem(currentItem);
         }
-
-//        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-//            @Override
-//            public void onBackStackChanged() {
-//                FragmentManager manager = getSupportFragmentManager();
-//                Fragment currentFragment = manager.findFragmentByTag("current_fragment");
-//                if (currentFragment instanceof Home){
-//                    selectItem(R.id.home_menu_item);
-//                } else if (currentFragment instanceof Dashboard){
-//                    selectItem(R.id.dashboard_menu_item);
-//                } else if (currentFragment instanceof Journey){
-//                    selectItem(R.id.add_a_trip_menu_item);
-//                } else if (currentFragment instanceof Feedback){
-//                    selectItem(R.id.feedback_menu_item);
-//                } else if (currentFragment instanceof Terms){
-//                    selectItem(R.id.terms_menu_item);
-//                }
-//            }
-//        });
 
     }
 
@@ -151,23 +137,29 @@ public class Main extends AppCompatActivity implements
 
         switch (itemId){
             case R.id.dashboard_menu_item:
+                currentItem = R.id.dashboard_menu_item;
                 fragment = new Dashboard();
                 getSupportActionBar().setTitle("Dashboard");
                 break;
             case R.id.add_a_trip_menu_item:
+                currentItem = R.id.add_a_trip_menu_item;
                 fragment = new Journey();
                 getSupportActionBar().setTitle("Add Trip");
                 break;
             case R.id.feedback_menu_item:
+                currentItem = R.id.feedback_menu_item;
                 fragment = new Feedback();
                 getSupportActionBar().setTitle("Feedback");
                 break;
             case R.id.terms_menu_item:
+                currentItem = R.id.terms_menu_item;
                 fragment = new Terms();
                 getSupportActionBar().setTitle("Terms and Conditions");
+                setTheme(R.style.AppTheme_NoActionBar);
                 break;
             case R.id.home_menu_item:
             default:
+                currentItem = R.id.home_menu_item;
                 fragment = new Home();
                 getSupportActionBar().setTitle("Home");
                 break;
@@ -181,7 +173,23 @@ public class Main extends AppCompatActivity implements
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Constants.LAST_ITEM_OUT_STATE, currentItem);
+    }
+
+    @Override
     public void goToTrip(int itemId) {
         selectItem(itemId);
+    }
+
+    @Override
+    public void setToolbar(View view, int resId) {
+        setSupportActionBar((Toolbar) view.findViewById(resId));
+    }
+
+    @Override
+    public void setNewTheme(int resId) {
+        setTheme(resId);
     }
 }
