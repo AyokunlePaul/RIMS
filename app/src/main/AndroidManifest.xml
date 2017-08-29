@@ -39,7 +39,6 @@
         <activity
             android:name="._activities.HomeReview"
             android:parentActivityName="._activities.Main" />
-        <activity android:name="._activities.Test"/>
     </application>
 
 </manifest>

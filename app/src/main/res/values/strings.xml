@@ -108,5 +108,6 @@
     <string name="collapsing_toolbar">Collapsing Toolbar</string>
     <string name="type">Type</string>
     <string name="click_me">Click Me!!!</string>
+    <string name="typing">is typing...</string>
 
 </resources>

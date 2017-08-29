@@ -56,12 +56,12 @@ public class Home extends Fragment {
 
         intent = new Intent(Home.this.getActivity(), HomeReview.class);
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.add_new_trip);
+        FloatingActionButton fab = rootView.findViewById(R.id.add_new_trip);
 
         adapter = new SectionedRecyclerViewAdapter();
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_home);
-        linearLayout = (LinearLayout) rootView.findViewById(R.id.no_trips_layout);
+        recyclerView = rootView.findViewById(R.id.recycler_view_home);
+        linearLayout = rootView.findViewById(R.id.no_trips_layout);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));

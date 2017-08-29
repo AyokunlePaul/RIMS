@@ -55,24 +55,24 @@ public class Journey extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_journey, container, false);
 
-        loadingLayout = (RelativeLayout) rootView.findViewById(R.id.loading_layout);
+        loadingLayout = rootView.findViewById(R.id.loading_layout);
 
         centralDB = new CentralDBHelper(getContext());
 
-        Button continueToLoad = (Button) rootView.findViewById(R.id.continue_to_trip);
+        Button continueToLoad = rootView.findViewById(R.id.continue_to_trip);
 
-        driver_sNameTextInputLayout = (TextInputLayout) rootView.findViewById(R.id.driver_s_name_input_layout);
-        driver_sPhoneTextInputLayout = (TextInputLayout) rootView.findViewById(R.id.driver_s_phone_number_input_layout);
-        vehicleNumberTextInputLayout = (TextInputLayout) rootView.findViewById(R.id.vehicle_registration_input_layout);
+        driver_sNameTextInputLayout = rootView.findViewById(R.id.driver_s_name_input_layout);
+        driver_sPhoneTextInputLayout = rootView.findViewById(R.id.driver_s_phone_number_input_layout);
+        vehicleNumberTextInputLayout = rootView.findViewById(R.id.vehicle_registration_input_layout);
 
-        driver_sName = (EditText) rootView.findViewById(R.id.driver_s_name);
-        driver_sPhone = (EditText) rootView.findViewById(R.id.driver_s_phone_number);
-        vehicleNumber = (EditText) rootView.findViewById(R.id.vehicle_registration);
+        driver_sName = rootView.findViewById(R.id.driver_s_name);
+        driver_sPhone = rootView.findViewById(R.id.driver_s_phone_number);
+        vehicleNumber = rootView.findViewById(R.id.vehicle_registration);
 
-        departureState = (Spinner) rootView.findViewById(R.id.departure_state);
-        departurePark = (Spinner) rootView.findViewById(R.id.departure_park);
-        routeFrom = (Spinner) rootView.findViewById(R.id.route_from);
-        routeTo = (Spinner) rootView.findViewById(R.id.route_to);
+        departureState = rootView.findViewById(R.id.departure_state);
+        departurePark = rootView.findViewById(R.id.departure_park);
+        routeFrom = rootView.findViewById(R.id.route_from);
+        routeTo = rootView.findViewById(R.id.route_to);
 
         helper  = new VehicleDatabaseHelper(getContext());
 
@@ -160,12 +160,12 @@ public class Journey extends Fragment implements
 
         final TextView vehicleName, vehicleMake, vehicleCapacity, vehicleWeight, vehicleEngine, vehicleRTSSS;
 
-        vehicleName = (TextView) customView.findViewById(R.id.vehicle_name);
-        vehicleMake = (TextView) customView.findViewById(R.id.vehicle_make);
-        vehicleCapacity = (TextView) customView.findViewById(R.id.vehicle_capacity);
-        vehicleWeight = (TextView) customView.findViewById(R.id.vehicle_weight);
-        vehicleEngine = (TextView) customView.findViewById(R.id.vehicle_engine);
-        vehicleRTSSS = (TextView) customView.findViewById(R.id.vehicle_rt_sss);
+        vehicleName = customView.findViewById(R.id.vehicle_name);
+        vehicleMake = customView.findViewById(R.id.vehicle_make);
+        vehicleCapacity = customView.findViewById(R.id.vehicle_capacity);
+        vehicleWeight = customView.findViewById(R.id.vehicle_weight);
+        vehicleEngine = customView.findViewById(R.id.vehicle_engine);
+        vehicleRTSSS = customView.findViewById(R.id.vehicle_rt_sss);
 
         final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Vehicle Information").setView(customView)

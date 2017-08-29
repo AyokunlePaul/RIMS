@@ -18,9 +18,6 @@ public class Terms extends Fragment {
 
         getActivity().setTheme(R.style.AppTheme_NoActionBar);
 
-//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar_terms);
-
-
         return view;
     }
 
