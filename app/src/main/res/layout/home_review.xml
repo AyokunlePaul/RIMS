@@ -11,17 +11,17 @@
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/vehicle_information_recycler_view"/>
+            android:id="@+id/vehicle_information_recycler_view_home_review"/>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/trip_information_recycler_view"/>
+            android:id="@+id/trip_information_recycler_view_home_review"/>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/passengers_information_recycler_view"/>
+            android:id="@+id/passengers_information_recycler_view_home_review"/>
 
     </LinearLayout>
 

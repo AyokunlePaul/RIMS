@@ -19,10 +19,10 @@ public class Terms extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_help, container, false);
+        View view = inflater.inflate(R.layout.fragment_terms, container, false);
 
-        ((ConfigureTheme)getActivity()).setToolbar(view, R.id.toolbar_terms);
-        ((ConfigureTheme)getActivity()).setNewTheme(R.style.AppTheme_NoActionBar);
+//        ((ConfigureTheme)getActivity()).setToolbar(view, R.id.toolbar_terms);
+//        ((ConfigureTheme)getActivity()).setNewTheme(R.style.AppTheme_NoActionBar);
 
         return view;
     }

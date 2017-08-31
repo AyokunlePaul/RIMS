@@ -1,7 +1,5 @@
 package i.am.eipeks.rims._activities;
 
-
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -158,6 +156,7 @@ public class RegisterReview extends AppCompatActivity{
                         });
                     }
                 });
+                alertDialog.show();
                 break;
 
             case R.id.send:

@@ -86,9 +86,9 @@ public class HomeSection extends StatelessSection {
 
         TextView header;
 
-        public HeaderViewHolder(View itemView) {
+        HeaderViewHolder(View itemView) {
             super(itemView);
-            header = (TextView) itemView.findViewById(R.id.section_header);
+            header = itemView.findViewById(R.id.section_header);
         }
     }
 
@@ -102,11 +102,11 @@ public class HomeSection extends StatelessSection {
 
             rootView = itemView;
 
-            vehicleName = (TextView) rootView.findViewById(R.id.vehicle_name_home_text_view);
-            dateAndTime = (TextView) rootView.findViewById(R.id.date_and_time_home_card_view);
-            driversName = (TextView) rootView.findViewById(R.id.driver_s_name_home_card_view);
-            displacement = (TextView) rootView.findViewById(R.id.displacement_home_card_view);
-            passengers = (TextView) rootView.findViewById(R.id.total_number_of_passengers_home_card_view);
+            vehicleName = rootView.findViewById(R.id.vehicle_name_home_text_view);
+            dateAndTime = rootView.findViewById(R.id.date_and_time_home_card_view);
+            driversName = rootView.findViewById(R.id.driver_s_name_home_card_view);
+            displacement = rootView.findViewById(R.id.displacement_home_card_view);
+            passengers = rootView.findViewById(R.id.total_number_of_passengers_home_card_view);
 
         }
     }
