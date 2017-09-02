@@ -20,6 +20,6 @@ public class Test extends AppCompatActivity {
 
         recyclerView.setAdapter(new TestAdapter(this, 18));
         recyclerView.setLayoutManager(new GridLayoutManager(this, 10));
-//        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 }
