@@ -39,6 +39,13 @@
         <activity
             android:name="._activities.HomeReview"
             android:parentActivityName="._activities.Main" />
+        <activity android:name="._activities.Test">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

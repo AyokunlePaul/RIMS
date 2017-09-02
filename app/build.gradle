@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
 
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
 
