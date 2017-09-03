@@ -2,12 +2,18 @@ package i.am.eipeks.rims._activities;
 
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +26,12 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
+import i.am.eipeks.rims._adapters.SeatNumberAdapter;
 import i.am.eipeks.rims._classes.Passenger;
 import i.am.eipeks.rims._database.CentralDBHelper;
 
@@ -35,20 +43,19 @@ public class RegisterPassenger extends AppCompatActivity{
 
     private int counter =  1, total = 0, radio;
     private int capacity;
-    private String uuid,totalNumberOfPassenger, registrationNumber, vehicleInformation, tripInformation, driverInformation;
+    private String uuid,totalNumberOfPassenger, registrationNumber, vehicleInformation, tripInformation, driverInformation, selectedSeats;
 
     private EditText passengerName, passengerAddress, passengerPhone, nextOfKin, kinPhone;
     private TextInputLayout passengerNameTextInput, passengerAddressTextInput, passengerPhoneTextInput, nextOfKinTextInput, kinPhoneTextInput;
     private TextView currentSeat;
 
-    private Spinner spinner;
+    private SeatNumberAdapter seatNumberAdapter;
+
+//    private Spinner spinner;
 
     private Passenger passenger;
 
     private CentralDBHelper centralDB;
-
-    private ArrayList<Integer> integers;
-    private ArrayAdapter<Integer> integerArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class RegisterPassenger extends AppCompatActivity{
         vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
         tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
         driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
+        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
 
@@ -73,6 +81,14 @@ public class RegisterPassenger extends AppCompatActivity{
         nextOfKinTextInput = (TextInputLayout) findViewById(R.id.kin_s_name_input_layout);
         kinPhoneTextInput = (TextInputLayout) findViewById(R.id.kin_s_phone_input_layout);
 
+        RecyclerView seatNumbers = (RecyclerView) findViewById(R.id.seat_numbers);
+
+        seatNumberAdapter = new SeatNumberAdapter(this, capacity, selectedSeats);
+
+        seatNumbers.setAdapter(seatNumberAdapter);
+        seatNumbers.setLayoutManager(new GridLayoutManager(this, 10));
+        seatNumbers.addItemDecoration(new GridSpacing(10, dpToPx(2), true));
+
         RadioGroup sex = (RadioGroup) findViewById(R.id.sex);
         sex.getChildAt(0).setSelected(true);
 
@@ -85,8 +101,6 @@ public class RegisterPassenger extends AppCompatActivity{
             }
         });
 
-        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
-
         if (savedInstanceState != null){
             uuid = savedInstanceState.getString("uuid-value");
         } else {
@@ -98,17 +112,6 @@ public class RegisterPassenger extends AppCompatActivity{
 
         currentSeat.setText(String.valueOf(counter));
         capacityTextView.setText(String.valueOf(capacity));
-
-        spinner = (Spinner) findViewById(R.id.seat_number);
-
-        integers = new ArrayList<>();
-
-        for (int loopCounter = 0; loopCounter < capacity; loopCounter++){
-            integers.add(loopCounter + 1);
-        }
-        integerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, integers);
-        integerArrayAdapter.setDropDownViewResource(R.layout.spinner_checked_text);
-        spinner.setAdapter(integerArrayAdapter);
     }
 
     @Override
@@ -172,44 +175,49 @@ public class RegisterPassenger extends AppCompatActivity{
                         }
 
                     } else {
-                        passenger = new Passenger(passengerName.getText().toString(), passengerPhone.getText().toString(), sex,
-                                passengerAddress.getText().toString(), nextOfKin.getText().toString(), String.valueOf(spinner.getSelectedItem()),
-                                kinPhone.getText().toString());
-                        new AsyncTask<Void, Void, Void>() {
+                        if (seatNumberAdapter.getSelectedSeat() == 0){
+                            Toast.makeText(this, "No seat selected", Toast.LENGTH_SHORT).show();
+                        } else {
+                            passenger = new Passenger(passengerName.getText().toString(), passengerPhone.getText().toString(), sex,
+                                    passengerAddress.getText().toString(), nextOfKin.getText().toString(), String.valueOf(seatNumberAdapter.getSelectedSeat()),
+                                    kinPhone.getText().toString());
+                            new AsyncTask<Void, Void, Void>() {
 
-                            @Override
-                            protected void onPreExecute() {
-                                Toast.makeText(RegisterPassenger.this, "Adding passenger...", Toast.LENGTH_SHORT).show();
-                            }
+                                @Override
+                                protected void onPreExecute() {
+                                    Toast.makeText(RegisterPassenger.this, "Adding passenger...", Toast.LENGTH_SHORT).show();
+                                }
 
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                centralDB.addPassenger(passenger, uuid);
-                                total += 1;
-                                return null;
-                            }
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    centralDB.addPassenger(passenger, uuid);
+                                    total += 1;
+                                    return null;
+                                }
 
-                            @Override
-                            protected void onPostExecute(Void aVoid) {
-                                Toast.makeText(RegisterPassenger.this, "Done", Toast.LENGTH_SHORT).show();
-                                integers.remove(spinner.getSelectedItem());
-                                integerArrayAdapter.notifyDataSetChanged();
-                                passengerName.setText("");
-                                passengerPhone.setText("");
-                                passengerAddress.setText("");
-                                nextOfKin.setText("");
-                                kinPhone.setText("");
-                                counter += 1;
-                                currentSeat.setText(String.valueOf(counter));
-                                Toast.makeText(RegisterPassenger.this, centralDB.getPassengers(uuid).get(0).getPassengerName(), Toast.LENGTH_SHORT).show();
+                                @Override
+                                protected void onPostExecute(Void aVoid) {
+                                    Toast.makeText(RegisterPassenger.this, "Done", Toast.LENGTH_SHORT).show();
+//                                integers.remove(spinner.getSelectedItem());
+//                                integerArrayAdapter.notifyDataSetChanged();
+                                    passengerName.setText("");
+                                    passengerPhone.setText("");
+                                    passengerAddress.setText("");
+                                    nextOfKin.setText("");
+                                    kinPhone.setText("");
+                                    counter += 1;
+                                    currentSeat.setText(String.valueOf(counter));
+                                    Toast.makeText(RegisterPassenger.this, centralDB.getPassengers(uuid).get(0).getPassengerName(), Toast.LENGTH_SHORT).show();
 //                                Toast.makeText(RegisterPassenger.this, String.valueOf(total), Toast.LENGTH_SHORT).show();
-                            }
-                        }.execute();
+                                }
+                            }.execute();
 
-                        if (total == capacity){
-                            item.setTitle("DONE");
+                            if (total == capacity){
+                                item.setTitle("DONE");
+                            }
                         }
                     }
+
                 }
                 return true;
         }
@@ -230,5 +238,44 @@ public class RegisterPassenger extends AppCompatActivity{
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("uuid-value", uuid);
+    }
+
+    private class GridSpacing extends RecyclerView.ItemDecoration{
+
+        private int spanCount, spacing;
+        private boolean includeEdge;
+
+        GridSpacing(int spanCount, int spacing, boolean includeEdge){
+            this.spanCount = spanCount;
+            this.includeEdge = includeEdge;
+            this.spacing = spacing;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view);
+            int column = position % spanCount;
+
+            if (includeEdge){
+                outRect.left = spacing - column * spacing / spanCount;
+                outRect.right = (column + 1) * spacing / spanCount;
+
+                if (position < spanCount) {
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing;
+            } else {
+                outRect.left = column * spacing / spanCount;
+                outRect.right = spacing - (column + 1) * spacing / spanCount;
+                if (position >= spanCount) {
+                    outRect.top = spacing;
+                }
+            }
+        }
+    }
+
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 }

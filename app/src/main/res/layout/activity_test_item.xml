@@ -4,10 +4,8 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:layout_margin="0dp"
-    card_view:cardElevation="7dp"
-    card_view:cardCornerRadius="5dp">
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp">
 
     <LinearLayout
         android:layout_width="match_parent"

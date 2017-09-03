@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -106,10 +107,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/passenger_s_address_input_layout"
-                android:id="@+id/group">
+                android:id="@+id/group"
+                android:gravity="center">
 
                 <RadioGroup
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:orientation="horizontal"
@@ -127,44 +129,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/female"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="120dp"
                         android:id="@+id/female"/>
 
                 </RadioGroup>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/sex"
-                    android:layout_alignParentEnd="true"
-                    android:orientation="horizontal"
-                    android:layout_centerVertical="true"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/seat"
-                        android:textSize="17sp"
-                        android:padding="10dp"
-                        android:textStyle="bold"/>
-
-                    <Spinner
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/seat_number"
-                        android:spinnerMode="dropdown"/>
-
-                </LinearLayout>
-
             </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/seat_numbers"
+                android:layout_below="@id/group" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/kin_s_name_input_layout"
                 android:textColorHint="@color/ash"
-                android:layout_below="@id/group">
+                android:layout_below="@id/seat_numbers">
 
                 <EditText
                     android:layout_width="match_parent"

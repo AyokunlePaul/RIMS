@@ -118,7 +118,8 @@ public class RegisterReview extends AppCompatActivity{
         switch (item.getItemId()){
             case R.id.delete:
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .setTitle("Delete this trip?")
+                        .setTitle("Delete this trip")
+                        .setMessage("Are you sure you want to delete this trip? \nAll trip information would be lost")
                         .setPositiveButton("Delete", null)
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
