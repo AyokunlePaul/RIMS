@@ -9,8 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 import i.am.eipeks.rims.R;
 
@@ -20,13 +19,20 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
     private Context context;
     private int totalNumberOfSeats;
     private int selectedSeat;
-    private String selectedSeats;
-    private List<String> selectedSeatsList;
+    private ArrayList<Integer> selectedSeatsList;
+    private boolean hasSelectedOnce;
 
-    public SeatNumberAdapter(Context context, int totalNumberOfSeats, String selectedSeats){
+    public SeatNumberAdapter(Context context, int totalNumberOfSeats, ArrayList<Integer> seatNumberArray){
         this.context = context;
         this.totalNumberOfSeats = totalNumberOfSeats;
-        selectedSeatsList = Arrays.asList(selectedSeats.split("_"));
+        selectedSeatsList = new ArrayList<>();
+        for (int counter = 0; counter < totalNumberOfSeats; counter++) {
+            this.selectedSeatsList.add(counter + 1);
+        }
+        for (int seatAlreadySelected : seatNumberArray) {
+            this.selectedSeatsList.remove(Integer.valueOf(seatAlreadySelected));
+        }
+        hasSelectedOnce = false;
     }
 
     @Override
@@ -37,28 +43,41 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
     @Override
     public void onBindViewHolder(final SeatNumberAdapter.Holder holder, int position) {
         holder.seatNumber.setText(String.format("%s", Integer.toString(position + 1)));
-        if (selectedSeats.contains(Integer.toString(position + 1))){
+        if (!selectedSeatsList.contains(holder.getAdapterPosition() + 1)){
             holder.seatNumber.setTextColor(context.getResources().getColor(android.R.color.white));
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.black));
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
             holder.cardView.setEnabled(false);
             holder.cardView.setClickable(false);
+        } else {
+            holder.seatNumber.setTextColor(context.getResources().getColor(android.R.color.black));
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
         }
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectedSeats.contains(Integer.toString(holder.getAdapterPosition() + 1))) {
-                    if ((holder.getAdapterPosition() + 1) == selectedSeat){
+                Snackbar.make(view, String.valueOf(holder.getAdapterPosition() + 1) + " clicked", Snackbar.LENGTH_SHORT).show();
+                if (hasSelectedOnce) {
+                    if ((holder.getAdapterPosition() + 1) == selectedSeat) {
                         holder.seatNumber.setTextColor(context.getResources().getColor(android.R.color.black));
                         holder.cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
                         selectSeat(0);
-                        selectedSeatsList.remove(String.valueOf(holder.getAdapterPosition() + 1));
+                        selectedSeatsList.add(holder.getAdapterPosition() + 1);
+                        hasSelectedOnce = false;
+                    } else {
+                        Snackbar.make(view, "You can't select 2 seats", Snackbar.LENGTH_SHORT).show();
+                        hasSelectedOnce = true;
                     }
-                    Snackbar.make(view, "Seat taken", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    holder.seatNumber.setTextColor(context.getResources().getColor(android.R.color.white));
-                    holder.cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
-                    selectSeat(holder.getAdapterPosition() + 1);
-                    selectedSeatsList.add(String.valueOf(holder.getAdapterPosition() + 1));
+                    if (!selectedSeatsList.contains(holder.getAdapterPosition() + 1)) {
+                        Snackbar.make(view, "Seat taken", Snackbar.LENGTH_SHORT).show();
+                        hasSelectedOnce = false;
+                    } else {
+                        holder.seatNumber.setTextColor(context.getResources().getColor(android.R.color.white));
+                        holder.cardView.setCardBackgroundColor(context.getResources().getColor(android.R.color.black));
+                        selectSeat(holder.getAdapterPosition() + 1);
+                        selectedSeatsList.remove(Integer.valueOf(holder.getAdapterPosition() + 1));
+                        hasSelectedOnce = true;
+                    }
                 }
             }
         });
@@ -69,22 +88,12 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
         return this.totalNumberOfSeats;
     }
 
-
-
     private void selectSeat(int seatNumber){
         this.selectedSeat = seatNumber;
     }
 
     public int getSelectedSeat(){
         return this.selectedSeat;
-    }
-
-    public String getSeats(){
-        StringBuilder value = new StringBuilder();
-        for (String currentSeat: selectedSeatsList){
-            value.append(currentSeat).append("_");
-        }
-        return value.deleteCharAt(value.lastIndexOf("_")).toString();
     }
 
     class Holder extends RecyclerView.ViewHolder{
@@ -98,5 +107,4 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
             seatNumber = cardView.findViewById(R.id.seat_number_test);
         }
     }
-
 }

@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
+import java.util.ArrayList;
+
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._adapters.SeatNumberAdapter;
 
@@ -21,7 +23,7 @@ public class Test extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view_test);
 
-        recyclerView.setAdapter(new SeatNumberAdapter(this, 18));
+        recyclerView.setAdapter(new SeatNumberAdapter(this, 18, new ArrayList<Integer>()));
         recyclerView.setLayoutManager(new GridLayoutManager(this, 10));
         recyclerView.addItemDecoration(new GridSpacing(10, dpToPx(2), true));
     }
