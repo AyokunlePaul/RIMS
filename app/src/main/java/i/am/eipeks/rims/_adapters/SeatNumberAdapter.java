@@ -40,6 +40,7 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
         return new Holder((CardView) LayoutInflater.from(this.context).inflate(R.layout.activity_test_item, parent, false));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(final SeatNumberAdapter.Holder holder, int position) {
         holder.seatNumber.setText(String.format("%s", Integer.toString(position + 1)));
@@ -55,7 +56,7 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, String.valueOf(holder.getAdapterPosition() + 1) + " clicked", Snackbar.LENGTH_SHORT).show();
+//                Snackbar.make(view, String.valueOf(holder.getAdapterPosition() + 1) + " clicked", Snackbar.LENGTH_SHORT).show();
                 if (hasSelectedOnce) {
                     if ((holder.getAdapterPosition() + 1) == selectedSeat) {
                         holder.seatNumber.setTextColor(context.getResources().getColor(android.R.color.black));
