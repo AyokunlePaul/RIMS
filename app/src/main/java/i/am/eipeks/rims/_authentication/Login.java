@@ -98,7 +98,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(final View view) {
 
-        ImageView loadingImage = (ImageView) loadingLayout.findViewById(R.id.rims_custom_loading);
+        ImageView loadingImage = loadingLayout.findViewById(R.id.rims_custom_loading);
         ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(loadingImage, "rotation", 0f, 90f, 180f, 270f, 360f);
         rotationAnimator.setDuration(2000);
         rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
