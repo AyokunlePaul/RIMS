@@ -57,8 +57,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         SQLiteDatabase vehicleDB = vehicleDatabaseHelper.getWritableDatabase();
 
-//        retrofit = new Retrofit.Builder().build();
-
         authenticationInfo = new ArrayList<>();
 
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
@@ -71,20 +69,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         Button login = (Button) findViewById(R.id.login_button);
         Button forgotPassword = (Button) findViewById(R.id.forgot_password_button);
-
-//        Cursor cursor = vehicleDB.query(VehicleDatabaseHelper.VEHICLE_TABLE_NAME, authenticationProjection,
-//                null, null, null, null, null);
-//
-//        if (cursor.moveToFirst()){
-//            do {
-//                try {
-//                    Authentication authentication = new Authentication(
-//                            cursor.getString(cursor.getColumnIndexOrThrow(VehicleDatabaseHelper.COLUMN_IDENTIFICATION_NUMBER)),
-//                            cursor.getString(cursor.getColumnIndexOrThrow(VehicleDatabaseHelper.COLUMN_PASSWORD)));
-//                    authenticationInfo.add(authentication);
-//                } catch (SQLiteException e){e.printStackTrace();}
-//            } while (cursor.moveToNext());
-//        }
 
         identificationTextInputLayout.setErrorEnabled(false);
         passwordTextInputLayout.setErrorEnabled(false);

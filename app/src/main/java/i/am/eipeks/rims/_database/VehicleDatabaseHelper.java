@@ -22,7 +22,7 @@ public class VehicleDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_IDENTIFICATION_NUMBER = "Identification";
     public static final String COLUMN_PASSWORD = "Password";
 
-    //Vehicle information table columns
+    //AuthVehicle information table columns
     private static final String VEHICLE_TABLE_NAME = "Vehicles";
     private static final String ID = "_id";
     private static final String COLUMN_VEHICLE_NAME = "Name";
@@ -33,7 +33,7 @@ public class VehicleDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_RT_SSS = "RT_SSS";
     private static final String COLUMN_REGISTRATION_NUMBER = "registrationNumber";
 
-    //Create Vehicle Database
+    //Create AuthVehicle Database
     private static final String createVehicleDatabaseTable = "CREATE TABLE " + VEHICLE_TABLE_NAME +
             " (" + ID + " INTEGER PRIMARY KEY, " + COLUMN_VEHICLE_NAME + " TEXT, " +
             COLUMN_VEHICLE_MAKE + " TEXT, " + COLUMN_CAPACITY + " INTEGER, " +
@@ -49,7 +49,7 @@ public class VehicleDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(createVehicleDatabaseTable);
-//        Toast.makeText(context, "Vehicle table created", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "AuthVehicle table created", Toast.LENGTH_SHORT).show();
 
         addDefaultValue(sqLiteDatabase);
     }

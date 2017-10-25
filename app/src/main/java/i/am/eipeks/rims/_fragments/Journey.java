@@ -1,9 +1,9 @@
 package i.am.eipeks.rims._fragments;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -20,18 +20,22 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
+import i.am.eipeks.rims.Utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
-import i.am.eipeks.rims._classes.Vehicle;
-import i.am.eipeks.rims._database.CentralDBHelper;
-import i.am.eipeks.rims._database.VehicleDatabaseHelper;
+import i.am.eipeks.rims._classes._network.AuthVehicle;
+import i.am.eipeks.rims._network.Auth;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Journey extends Fragment implements
         AdapterView.OnItemSelectedListener {
@@ -40,16 +44,20 @@ public class Journey extends Fragment implements
 
     private Spinner departureState, departurePark, routeFrom, routeTo;
 
-    private VehicleDatabaseHelper helper;
+//    private VehicleDatabaseHelper helper;
 
     private RelativeLayout loadingLayout;
     private TextInputLayout driver_sNameTextInputLayout, driver_sPhoneTextInputLayout, vehicleNumberTextInputLayout;
 
     private EditText driver_sName, driver_sPhone, vehicleNumber;
 
-    private CentralDBHelper centralDB;
+//    private CentralDBHelper centralDB;
 
-    private Vehicle currentVehicle;
+//    private Vehicle currentVehicle;
+    private AuthVehicle authVehicle;
+    private AlertDialog dialog;
+
+    private Auth auth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +65,7 @@ public class Journey extends Fragment implements
 
         loadingLayout = rootView.findViewById(R.id.loading_layout);
 
-        centralDB = new CentralDBHelper(getContext());
+        auth = APIUtils.getAuth();
 
         Button continueToLoad = rootView.findViewById(R.id.continue_to_trip);
 
@@ -74,7 +82,7 @@ public class Journey extends Fragment implements
         routeFrom = rootView.findViewById(R.id.route_from);
         routeTo = rootView.findViewById(R.id.route_to);
 
-        helper  = new VehicleDatabaseHelper(getContext());
+//        helper  = new VehicleDatabaseHelper(getContext());
 
         initializeSpinners();
 
@@ -141,6 +149,31 @@ public class Journey extends Fragment implements
 
     }
 
+    private void getVehicle(final View view, final String vehicleNumber){
+        auth.getVehicle(vehicleNumber).enqueue(new Callback<AuthVehicle>() {
+            @Override
+            public void onResponse(@NonNull Call<AuthVehicle> call, @NonNull Response<AuthVehicle> response) {
+                if (response.isSuccessful()){
+                    authVehicle = response.body();
+                    dialog.show();
+                } else {
+                    Snackbar.make(view, "Cannot get vehicle details", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getVehicle(view, vehicleNumber);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AuthVehicle> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void getVehicleInformation(final View view){
         final String vehicleNumberString;
 
@@ -167,7 +200,7 @@ public class Journey extends Fragment implements
         vehicleEngine = customView.findViewById(R.id.vehicle_engine);
         vehicleRTSSS = customView.findViewById(R.id.vehicle_rt_sss);
 
-        final AlertDialog dialog = new AlertDialog.Builder(getContext())
+        dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Vehicle Information").setView(customView)
                 .setPositiveButton("CONTINUE", null)
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -196,46 +229,23 @@ public class Journey extends Fragment implements
 
             vehicleNumberString = vehicleNumber.getText().toString();
 
-            new AsyncTask<Void, Void, Void>(){
-
-                @Override
-                protected void onPreExecute() {
-                    loadingLayout.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    currentVehicle = helper.getVehicle(vehicleNumberString);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    loadingLayout.setVisibility(View.GONE);
-                    if (currentVehicle != null){
-                        dialog.show();
-                    } else {
-                        Snackbar.make(view, "Vehicle not registered", Snackbar.LENGTH_LONG).show();
-                    }
-                }
-            }.execute();
-
+            getVehicle(view, vehicleNumberString);
 
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-                    vehicleName.setText(currentVehicle.getVehicleName());
-                    vehicleMake.setText(currentVehicle.getVehicleMake());
-                    vehicleCapacity.setText(currentVehicle.getVehicleCapacity());
-                    vehicleWeight.setText(currentVehicle.getVehicleWeight());
-                    vehicleEngine.setText(currentVehicle.getVehicleEngine());
-                    vehicleRTSSS.setText(currentVehicle.getVehicleRTSSS());
+                    vehicleName.setText(authVehicle.getName());
+                    vehicleMake.setText(authVehicle.getMake());
+                    vehicleCapacity.setText(authVehicle.getCapacity());
+                    vehicleWeight.setText(authVehicle.getWeight());
+                    vehicleEngine.setText(authVehicle.getEngine());
+                    vehicleRTSSS.setText(authVehicle.getRtSss());
 
                     vehicleIntent = String.format("%s_%s_%s_%s_%s_%s_%s",
-                            currentVehicle.getVehicleName(), currentVehicle.getVehicleMake(), currentVehicle.getVehicleCapacity(),
-                            currentVehicle.getVehicleWeight(), currentVehicle.getVehicleEngine(), currentVehicle.getVehicleRTSSS(),
-                            currentVehicle.getRegistrationNumber());
+                            authVehicle.getName(), authVehicle.getMake(), authVehicle.getCapacity(),
+                            authVehicle.getWeight(), authVehicle.getEngine(), authVehicle.getRtSss(),
+                            authVehicle.getRegistrationNumber());
 
                     Button button = ((AlertDialog) dialogInterface).getButton(AlertDialog.BUTTON_POSITIVE);
 
@@ -261,8 +271,8 @@ public class Journey extends Fragment implements
                                 protected void onPostExecute(Void aVoid) {
                                     loadingLayout.setVisibility(View.GONE);
                                     startActivity(new Intent(getContext(), RegisterPassenger.class)
-                                    .putExtra(Constants.INTENT_CAPACITY_JOURNEY, currentVehicle.getVehicleCapacity())
-                                    .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, currentVehicle.getRegistrationNumber())
+                                    .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getCapacity())
+                                    .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getRegistrationNumber())
                                     .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
                                     .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)
                                     .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleIntent));

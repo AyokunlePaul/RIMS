@@ -57,7 +57,7 @@ public class HomeReview extends AppCompatActivity {
         SectionedRecyclerViewAdapter tripAdapter = new SectionedRecyclerViewAdapter();
 
         passengerAdapter.addSection(new PassengerInformationSection(passengers, "Passenger Information"));
-        vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "Vehicle Information"));
+        vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "AuthVehicle Information"));
         tripAdapter.addSection(new TripInformationSection(this, new SubTrip(trip, driver), "Trip Information"));
 
         vehicleRecyclerView.setAdapter(vehicleAdapter);

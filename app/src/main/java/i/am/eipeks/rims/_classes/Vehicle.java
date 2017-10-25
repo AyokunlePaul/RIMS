@@ -1,11 +1,16 @@
 package i.am.eipeks.rims._classes;
 
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Vehicle {
+
+    public Vehicle(){}
 
     public Vehicle(String vehicleName, String vehicleMake, String vehicleCapacity,
                    String vehicleWeight, String vehicleEngine, String vehicleRTSS, String registrationNumber) {
@@ -29,8 +34,33 @@ public class Vehicle {
         this.registrationNumber = information.get(6);
     }
 
-    private String vehicleName, vehicleMake, vehicleCapacity,
-    vehicleWeight, vehicleEngine, vehicleRTSS, registrationNumber;
+    @SerializedName("vehicleName")
+    @Expose
+    private String vehicleName;
+
+    @SerializedName("vehicleMake")
+    @Expose
+    private String vehicleMake;
+
+    @SerializedName("vehicleCapacity")
+    @Expose
+    private String vehicleCapacity;
+
+    @SerializedName("vehicleWeight")
+    @Expose
+    private String vehicleWeight;
+
+    @SerializedName("vehicleEngine")
+    @Expose
+    private String vehicleEngine;
+
+    @SerializedName("vehicleRTSS")
+    @Expose
+    private String vehicleRTSS;
+
+    @SerializedName("registrationNumber")
+    @Expose
+    private String registrationNumber;
 
 
     public String getVehicleName() {

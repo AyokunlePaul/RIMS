@@ -36,7 +36,7 @@ public class CentralDBHelper extends SQLiteOpenHelper {
     private static final String TRIP_TABLE_NAME = "tripTable";
     //</editor-fold>
 
-    //<editor-fold desc="Vehicle Table Information">
+    //<editor-fold desc="AuthVehicle Table Information">
     private static final String COLUMN_VEHICLE_NAME = "vehicleName";
     private static final String COLUMN_VEHICLE_MAKE = "vehicleMake";
     private static final String COLUMN_VEHICLE_CAPACITY = "vehicleCapacity";
@@ -71,7 +71,7 @@ public class CentralDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TRIP_CALENDAR_YEAR = "calendarYear";
     //</editor-fold>
 
-    //<editor-fold desc="Create Vehicle Table Query">
+    //<editor-fold desc="Create AuthVehicle Table Query">
     private static final String createVehicleTable = "CREATE TABLE " + VEHICLE_TABLE_NAME + " (" +
             ID + " INTEGER PRIMARY KEY, " + COLUMN_VEHICLE_NAME + " TEXT, " +
             COLUMN_VEHICLE_MAKE + " TEXT, " + COLUMN_VEHICLE_CAPACITY + " INTEGER, " +

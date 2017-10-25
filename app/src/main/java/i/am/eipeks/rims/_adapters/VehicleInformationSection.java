@@ -47,7 +47,7 @@ public class VehicleInformationSection extends StatelessSection {
 
         itemHolder.vehicleName.setText(vehicle.getVehicleName());
         itemHolder.vehicleMake.setText(String.format("%s: %s", "Make", vehicle.getVehicleMake()));
-        itemHolder.vehicleNumber.setText(String.format("%s: %s", "Vehicle No", vehicle.getVehicleEngine()));
+        itemHolder.vehicleNumber.setText(String.format("%s: %s", "AuthVehicle No", vehicle.getVehicleEngine()));
         itemHolder.vehicleCapacity.setText(String.format("%s: %s %s", "Capacity", vehicle.getVehicleCapacity(), "Seater"));
 
     }

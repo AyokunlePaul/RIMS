@@ -94,7 +94,7 @@ public class RegisterReview extends AppCompatActivity{
             @Override
             protected void onPostExecute(Void aVoid) {
                 passengerAdapter.addSection(new PassengerInformationSection(passengers, "Passengers"));
-                vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "Vehicle Information"));
+                vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "AuthVehicle Information"));
                 tripAdapter.addSection(new TripInformationSection(RegisterReview.this, new SubTrip(trip, driver), "Trip Information"));
 
                 passengersRecycleView.setAdapter(passengerAdapter);
