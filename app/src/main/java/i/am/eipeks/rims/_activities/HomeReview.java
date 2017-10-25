@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -38,7 +37,7 @@ public class HomeReview extends AppCompatActivity {
 
         CentralDBHelper centralDBHelper = new CentralDBHelper(this);
 
-        Vehicle vehicle = new VehicleDatabaseHelper(this).getVehicle(registrationNumber);
+        Vehicle vehicle = centralDBHelper.getVehicle(registrationNumber);
         ArrayList<Passenger> passengers = centralDBHelper.getPassengers(UUID);
         Driver driver = centralDBHelper.getDriver(UUID);
         Trip trip = centralDBHelper.getTrip(UUID);
@@ -57,7 +56,7 @@ public class HomeReview extends AppCompatActivity {
         SectionedRecyclerViewAdapter tripAdapter = new SectionedRecyclerViewAdapter();
 
         passengerAdapter.addSection(new PassengerInformationSection(passengers, "Passenger Information"));
-        vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "AuthVehicle Information"));
+        vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "Vehicle Information"));
         tripAdapter.addSection(new TripInformationSection(this, new SubTrip(trip, driver), "Trip Information"));
 
         vehicleRecyclerView.setAdapter(vehicleAdapter);

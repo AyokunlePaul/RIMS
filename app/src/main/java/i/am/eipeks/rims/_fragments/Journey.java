@@ -1,5 +1,6 @@
 package i.am.eipeks.rims._fragments;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -31,6 +32,7 @@ import i.am.eipeks.rims.R;
 import i.am.eipeks.rims.Utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
 import i.am.eipeks.rims._classes._network.AuthVehicle;
+import i.am.eipeks.rims._classes._network.JSONResponse;
 import i.am.eipeks.rims._network.Auth;
 
 import retrofit2.Call;
@@ -150,26 +152,33 @@ public class Journey extends Fragment implements
     }
 
     private void getVehicle(final View view, final String vehicleNumber){
-        auth.getVehicle(vehicleNumber).enqueue(new Callback<AuthVehicle>() {
+        auth.getVehicle(vehicleNumber).enqueue(new Callback<JSONResponse>() {
             @Override
-            public void onResponse(@NonNull Call<AuthVehicle> call, @NonNull Response<AuthVehicle> response) {
+            public void onResponse(@NonNull Call<JSONResponse> call, @NonNull Response<JSONResponse> response) {
                 if (response.isSuccessful()){
-                    authVehicle = response.body();
+                    loadingLayout.setVisibility(View.GONE);
+                    //noinspection ConstantConditions
+                    authVehicle = response.body().getAuthVehicle();
+//                    Toast.makeText(getContext(), authVehicle.getName(), Toast.LENGTH_SHORT).show();
                     dialog.show();
                 } else {
-                    Snackbar.make(view, "Cannot get vehicle details", Snackbar.LENGTH_INDEFINITE)
+                    loadingLayout.setVisibility(View.GONE);
+                    //noinspection deprecation
+                    Snackbar.make(view, Integer.toString(response.code()), Snackbar.LENGTH_INDEFINITE)
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    loadingLayout.setVisibility(View.VISIBLE);
                                     getVehicle(view, vehicleNumber);
                                 }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary));
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<AuthVehicle> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<JSONResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingLayout.setVisibility(View.GONE);
             }
         });
     }
@@ -189,6 +198,7 @@ public class Journey extends Fragment implements
         driver_sPhoneTextInputLayout.setErrorEnabled(false);
         vehicleNumberTextInputLayout.setErrorEnabled(false);
 
+        @SuppressLint("InflateParams")
         final View customView = LayoutInflater.from(getContext()).inflate(R.layout.vehicle_information_dialog, null);
 
         final TextView vehicleName, vehicleMake, vehicleCapacity, vehicleWeight, vehicleEngine, vehicleRTSSS;
@@ -230,6 +240,8 @@ public class Journey extends Fragment implements
             vehicleNumberString = vehicleNumber.getText().toString();
 
             getVehicle(view, vehicleNumberString);
+
+            loadingLayout.setVisibility(View.VISIBLE);
 
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
 

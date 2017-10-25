@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class AuthVehicle {
 
+    public AuthVehicle(){}
+
     @SerializedName("id")
     @Expose
     private Integer id;

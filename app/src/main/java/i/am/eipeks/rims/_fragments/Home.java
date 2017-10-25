@@ -136,10 +136,16 @@ public class Home extends Fragment {
                 linearLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
 
-                adapter.addSection(new HomeSection(Home.this.getContext(), intent, "Today", today));
-                adapter.addSection(new HomeSection(Home.this.getContext(), intent, "Yesterday", yesterday));
-                adapter.addSection(new HomeSection(Home.this.getContext(), intent, "Recent", recent));
 
+                if (!today.isEmpty()){
+                    adapter.addSection(new HomeSection(Home.this.getContext(), intent, "Today", today));
+                }
+                if (!yesterday.isEmpty()){
+                    adapter.addSection(new HomeSection(Home.this.getContext(), intent, "Yesterday", yesterday));
+                }
+                if (!recent.isEmpty()){
+                    adapter.addSection(new HomeSection(Home.this.getContext(), intent, "Recent", recent));
+                }
                 adapter.notifyDataSetChanged();
             }
         }

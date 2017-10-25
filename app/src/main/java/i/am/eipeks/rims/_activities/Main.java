@@ -39,6 +39,7 @@ public class Main extends AppCompatActivity implements
 
     private int currentItem;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,18 +57,21 @@ public class Main extends AppCompatActivity implements
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.rims_icon));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
         TextView owner_s_info = navigationView.getHeaderView(0).findViewById(R.id.owner_s_name);
         TextView owner_s_id = navigationView.getHeaderView(0).findViewById(R.id.owner_s_id);
 
         navigationView.setNavigationItemSelectedListener(this);
+//        navigationView.color
 
         owner_s_id.setText(owner_s_info_array[1].trim());
         owner_s_info.setText(owner_s_info_array[0].trim());
 
 
         setSupportActionBar(toolbar);
+//        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.rims_icon));
 
         navigationView.setItemIconTintList(null);
 
@@ -76,6 +80,7 @@ public class Main extends AppCompatActivity implements
 
         toggle.syncState();
 
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null){
@@ -132,6 +137,7 @@ public class Main extends AppCompatActivity implements
         return true;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void selectItem(int itemId) {
         Fragment fragment;
 

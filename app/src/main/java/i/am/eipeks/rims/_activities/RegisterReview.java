@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
@@ -47,7 +48,7 @@ public class RegisterReview extends AppCompatActivity{
     private Trip trip;
     private Driver driver;
 
-    @SuppressWarnings("NullPointerException")
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,28 +165,39 @@ public class RegisterReview extends AppCompatActivity{
                 if (!(Integer.valueOf(totalNumberOfPassengers) > 0)){
                     Toast.makeText(this, "Enter at least one passenger", Toast.LENGTH_SHORT).show();
                 } else {
-                    new AsyncTask<Void, Void, Void>() {
+                    new AlertDialog.Builder(this)
+                            .setMessage(String.format(Locale.ENGLISH, "%s", "Are you sure you wanna add trip?"))
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new AsyncTask<Void, Void, Void>() {
+                                            @Override
+                                            protected void onPreExecute() {
 
-                        @Override
-                        protected void onPreExecute() {
+                                            }
 
-                        }
+                                            @Override
+                                            protected Void doInBackground(Void... voids) {
+                                                centralDB.addTrip(trip, uuid);
+                                                centralDB.addVehicle(vehicle, uuid);
+                                                centralDB.addDriver(driver, uuid);
+                                                centralDB.modifyTrip(totalNumberOfPassengers, uuid);
+                                                return null;
+                                            }
 
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            centralDB.addTrip(trip, uuid);
-                            centralDB.addVehicle(vehicle, uuid);
-                            centralDB.addDriver(driver, uuid);
-                            centralDB.modifyTrip(totalNumberOfPassengers, uuid);
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            Toast.makeText(RegisterReview.this, "Done", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterReview.this, Main.class));
-                        }
-                    }.execute();
+                                            @Override
+                                            protected void onPostExecute(Void aVoid) {
+                                                Toast.makeText(RegisterReview.this, "Done", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(RegisterReview.this, Main.class));
+                                            }
+                                        }.execute();
+                                    }
+                            }).create().show();
                 }
                 break;
         }

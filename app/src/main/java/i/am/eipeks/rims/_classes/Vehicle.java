@@ -4,7 +4,6 @@ package i.am.eipeks.rims._classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
