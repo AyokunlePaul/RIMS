@@ -37,7 +37,7 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
 
     @Override
     public SeatNumberAdapter.Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new Holder((CardView) LayoutInflater.from(this.context).inflate(R.layout.activity_test_item, parent, false));
+        return new Holder((CardView) LayoutInflater.from(this.context).inflate(R.layout.seat_number_item, parent, false));
     }
 
     @SuppressWarnings("deprecation")

@@ -1,6 +1,7 @@
 package i.am.eipeks.rims._activities;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -8,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,8 +39,8 @@ public class RegisterPassenger extends AppCompatActivity{
     public static final String INTENT_UUID = "UUID";
     public static final String INTENT_REGISTRATION_NUMBER = "registrationNumber";
 
-    private int counter =  1, total = 0, radio;
-    private int capacity;
+    private int counter =  1, total = 0, radio, capacity;
+    private boolean backPressedOnce = false;
     private String uuid,totalNumberOfPassenger, registrationNumber, vehicleInformation, tripInformation, driverInformation;
 
     private EditText passengerName, passengerAddress, passengerPhone, nextOfKin, kinPhone;
@@ -62,16 +64,17 @@ public class RegisterPassenger extends AppCompatActivity{
 
         if (savedInstanceState != null){
             uuid = savedInstanceState.getString("uuid-value");
-//            selectedSeats = savedInstanceState.getString("seats-selected");
+            vehicleInformation = savedInstanceState.getString("vehicle");
+            tripInformation = savedInstanceState.getString("trip");
+            driverInformation = savedInstanceState.getString("driver");
+            capacity = savedInstanceState.getInt("capacity");
         } else {
             uuid = UUID.randomUUID().toString();
-//            selectedSeats = "";
+            vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
+            tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
+            driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
+            capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
         }
-
-        vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
-        tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-        driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
-        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
 
@@ -230,6 +233,29 @@ public class RegisterPassenger extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!backPressedOnce){
+            new AlertDialog.Builder(this)
+                    .setMessage("Cancel trip registration?")
+                    .setTitle("Cancel")
+                    .setPositiveButton("Cancel trip", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(RegisterPassenger.this, Main.class));
+                        }
+                    }).setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+        } else {
+            backPressedOnce = true;
+        }
+    }
+
     public void gotoReview(View view){
         totalNumberOfPassenger = Integer.toString(total);
         startActivity(new Intent(this, RegisterReview.class)
@@ -244,6 +270,10 @@ public class RegisterPassenger extends AppCompatActivity{
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("uuid-value", uuid);
+        outState.putInt("capacity", capacity);
+        outState.putString("vehicle", vehicleInformation);
+        outState.putString("driver", driverInformation);
+        outState.putString("trip", tripInformation);
     }
 
     private class GridSpacing extends RecyclerView.ItemDecoration{

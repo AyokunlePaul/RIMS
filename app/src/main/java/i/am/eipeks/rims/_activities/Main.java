@@ -25,17 +25,17 @@ import i.am.eipeks.rims._fragments.dashboard.Dashboard;
 import i.am.eipeks.rims._fragments.Feedback;
 import i.am.eipeks.rims._fragments.Home;
 import i.am.eipeks.rims._fragments.Journey;
-import i.am.eipeks.rims._fragments.Terms;
 
 public class Main extends AppCompatActivity implements
         View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener ,
-        Home.GoToTrip,
-        Terms.ConfigureTheme{
+        Home.GoToTrip{
 
     private ActionBarDrawerToggle toggle;
 
     private DrawerLayout drawerLayout;
+
+    private NavigationView navigationView;
 
     private int currentItem;
 
@@ -49,12 +49,8 @@ public class Main extends AppCompatActivity implements
 
         String owner_s_info_array[] = session.getUserLoggedIn().split("_");
 
-//        DateFormat.getDateInstance().t
-
-//        Toast.makeText(this, Integer.toString(Calendar.getInstance().get(Calendar.MONTH)), Toast.LENGTH_SHORT).show();
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.rims_icon));
@@ -64,14 +60,13 @@ public class Main extends AppCompatActivity implements
         TextView owner_s_id = navigationView.getHeaderView(0).findViewById(R.id.owner_s_id);
 
         navigationView.setNavigationItemSelectedListener(this);
-//        navigationView.color
+//        navigationView.setItemBackgroundResource(R.color.colorPrimaryDark);
 
         owner_s_id.setText(owner_s_info_array[1].trim());
         owner_s_info.setText(owner_s_info_array[0].trim());
 
 
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.rims_icon));
 
         navigationView.setItemIconTintList(null);
 
@@ -157,12 +152,6 @@ public class Main extends AppCompatActivity implements
                 fragment = new Feedback();
                 getSupportActionBar().setTitle("Feedback");
                 break;
-            case R.id.terms_menu_item:
-                currentItem = R.id.terms_menu_item;
-                fragment = new Terms();
-                getSupportActionBar().setTitle("Terms and Conditions");
-                setTheme(R.style.AppTheme_NoActionBar);
-                break;
             case R.id.home_menu_item:
             default:
                 currentItem = R.id.home_menu_item;
@@ -189,13 +178,4 @@ public class Main extends AppCompatActivity implements
         selectItem(itemId);
     }
 
-    @Override
-    public void setToolbar(View view, int resId) {
-        setSupportActionBar((Toolbar) view.findViewById(resId));
-    }
-
-    @Override
-    public void setNewTheme(int resId) {
-        setTheme(resId);
-    }
 }

@@ -19,7 +19,6 @@ import i.am.eipeks.rims._classes.SubTrip;
 import i.am.eipeks.rims._classes.Trip;
 import i.am.eipeks.rims._classes.Vehicle;
 import i.am.eipeks.rims._database.CentralDBHelper;
-import i.am.eipeks.rims._database.VehicleDatabaseHelper;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
 

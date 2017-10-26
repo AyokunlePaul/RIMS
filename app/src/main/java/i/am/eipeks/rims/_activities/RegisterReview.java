@@ -56,6 +56,7 @@ public class RegisterReview extends AppCompatActivity{
 
         getSupportActionBar().setSubtitle("Current Trip Information");
         getSupportActionBar().setTitle("RegisterReview Trip");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
         tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
@@ -159,7 +160,7 @@ public class RegisterReview extends AppCompatActivity{
                     }
                 });
                 alertDialog.show();
-                break;
+                return true;
 
             case R.id.send:
                 if (!(Integer.valueOf(totalNumberOfPassengers) > 0)){
@@ -199,9 +200,8 @@ public class RegisterReview extends AppCompatActivity{
                                     }
                             }).create().show();
                 }
-                break;
+                return true;
         }
-
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 }

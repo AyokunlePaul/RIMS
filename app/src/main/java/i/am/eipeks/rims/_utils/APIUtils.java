@@ -1,4 +1,4 @@
-package i.am.eipeks.rims.Utils;
+package i.am.eipeks.rims._utils;
 
 
 import i.am.eipeks.rims._network.Auth;

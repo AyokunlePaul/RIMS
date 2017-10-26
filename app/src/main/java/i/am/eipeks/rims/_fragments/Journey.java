@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -29,7 +28,7 @@ import java.util.Date;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims.Utils.APIUtils;
+import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
 import i.am.eipeks.rims._classes._network.AuthVehicle;
 import i.am.eipeks.rims._classes._network.JSONResponse;
@@ -45,17 +44,13 @@ public class Journey extends Fragment implements
     private String driverIntent, vehicleIntent, tripIntent;
 
     private Spinner departureState, departurePark, routeFrom, routeTo;
-
-//    private VehicleDatabaseHelper helper;
+    private Button continueToLoad;
 
     private RelativeLayout loadingLayout;
     private TextInputLayout driver_sNameTextInputLayout, driver_sPhoneTextInputLayout, vehicleNumberTextInputLayout;
 
     private EditText driver_sName, driver_sPhone, vehicleNumber;
 
-//    private CentralDBHelper centralDB;
-
-//    private Vehicle currentVehicle;
     private AuthVehicle authVehicle;
     private AlertDialog dialog;
 
@@ -69,7 +64,7 @@ public class Journey extends Fragment implements
 
         auth = APIUtils.getAuth();
 
-        Button continueToLoad = rootView.findViewById(R.id.continue_to_trip);
+        continueToLoad = rootView.findViewById(R.id.continue_to_trip);
 
         driver_sNameTextInputLayout = rootView.findViewById(R.id.driver_s_name_input_layout);
         driver_sPhoneTextInputLayout = rootView.findViewById(R.id.driver_s_phone_number_input_layout);
@@ -163,21 +158,36 @@ public class Journey extends Fragment implements
                     dialog.show();
                 } else {
                     loadingLayout.setVisibility(View.GONE);
-                    //noinspection deprecation
-                    Snackbar.make(view, Integer.toString(response.code()), Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    loadingLayout.setVisibility(View.VISIBLE);
-                                    getVehicle(view, vehicleNumber);
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                    switch (response.code()){
+                        case 404:
+                            //noinspection deprecation
+                            Snackbar.make(view, "Error getting vehicle number", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            loadingLayout.setVisibility(View.VISIBLE);
+                                            getVehicle(view, vehicleNumber);
+                                        }
+                                    }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                            break;
+                        case 400:
+                            Snackbar.make(view, "Vehicle not registered", Snackbar.LENGTH_LONG).show();
+                            break;
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<JSONResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                //noinspection deprecation
+                Snackbar.make(view, "Network error", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                loadingLayout.setVisibility(View.VISIBLE);
+                                getVehicle(view, vehicleNumber);
+                            }
+                        }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 loadingLayout.setVisibility(View.GONE);
             }
         });
@@ -185,6 +195,9 @@ public class Journey extends Fragment implements
 
     public void getVehicleInformation(final View view){
         final String vehicleNumberString;
+
+        continueToLoad.setEnabled(false);
+        continueToLoad.setClickable(false);
 
         String dateAndTime = DateFormat.getDateTimeInstance().format(new Date());
         String calendarDate = Integer.toString(Calendar.getInstance().get(Calendar.DATE));
