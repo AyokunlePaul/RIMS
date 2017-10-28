@@ -10,13 +10,13 @@ import android.widget.RelativeLayout;
 
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._authentication.Login;
-import i.am.eipeks.rims._authentication.Session;
+import i.am.eipeks.rims._utils.SessionUtils;
 import i.am.eipeks.rims._database.CentralDBHelper;
 import i.am.eipeks.rims._database.VehicleDatabaseHelper;
 
 public class WelcomePage extends AppCompatActivity {
 
-    Session firstTimeSession;
+    SessionUtils firstTimeSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +25,9 @@ public class WelcomePage extends AppCompatActivity {
 
         final RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
-        firstTimeSession = new Session(this);
+        firstTimeSession = new SessionUtils(this);
 
-        if (firstTimeSession.hasAppRunOnce()){
+        if (SessionUtils.hasAppRunOnce()){
             startActivity(new Intent(this, Login.class));
         }
 
@@ -47,7 +47,7 @@ public class WelcomePage extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             startActivity(new Intent(WelcomePage.this, Login.class));
-                                            firstTimeSession.setAppHasRunBefore(true);
+                                            SessionUtils.setAppHasRunBefore(true);
                                             finish();
                                         }
                                     },

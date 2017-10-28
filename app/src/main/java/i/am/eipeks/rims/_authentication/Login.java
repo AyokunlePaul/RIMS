@@ -1,10 +1,6 @@
 package i.am.eipeks.rims._authentication;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -14,60 +10,45 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
-
+import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._activities.Main;
-import i.am.eipeks.rims._classes.Authentication;
-import i.am.eipeks.rims._database.VehicleDatabaseHelper;
+import i.am.eipeks.rims._classes._network.AuthUser;
+import i.am.eipeks.rims._classes._network.JSONResponseUser;
 import i.am.eipeks.rims._network.Auth;
 import i.am.eipeks.rims._utils.APIUtils;
+import i.am.eipeks.rims._utils.NetworkUtils;
+import i.am.eipeks.rims._utils.SessionUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    private Session session;
-
     private EditText identificationNumber, password;
+    private Button loginButton, forgotPassword;
 
-    private String[] authenticationProjection = {VehicleDatabaseHelper.COLUMN_PASSWORD,
-            VehicleDatabaseHelper.COLUMN_IDENTIFICATION_NUMBER};
+    private String token;
 
     private TextInputLayout identificationTextInputLayout, passwordTextInputLayout;
 
-    private ArrayList<Authentication> authenticationInfo;
-
     private Auth authenticateUser;
+    private AuthUser user;
 
     private RelativeLayout loadingLayout;
-
-    public static final String ID = "ID";
-    public static final String PASSWORD = "Password";
-    public static final String USER = "User";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        session = new Session(this);
-
-        if (session.isLoggedIn()){
+        if (SessionUtils.isLoggedIn()){
             startActivity(new Intent(this, Main.class));
         }
 
         authenticateUser = APIUtils.getAuth();
-
-        VehicleDatabaseHelper vehicleDatabaseHelper = new VehicleDatabaseHelper(this);
-
-        SQLiteDatabase vehicleDB = vehicleDatabaseHelper.getWritableDatabase();
-
-        authenticationInfo = new ArrayList<>();
 
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
@@ -77,25 +58,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         identificationNumber = (EditText) findViewById(R.id.identification_number);
         password = (EditText) findViewById(R.id.password);
 
-        Button login = (Button) findViewById(R.id.login_button);
-        Button forgotPassword = (Button) findViewById(R.id.forgot_password_button);
+        loginButton = (Button) findViewById(R.id.login_button);
+        forgotPassword = (Button) findViewById(R.id.forgot_password_button);
 
         identificationTextInputLayout.setErrorEnabled(false);
         passwordTextInputLayout.setErrorEnabled(false);
 
-        login.setOnClickListener(this);
+        loginButton.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
-
-//        cursor.close();
     }
 
     @Override
     public void onClick(final View view) {
-        ImageView loadingImage = loadingLayout.findViewById(R.id.rims_custom_loading);
-        ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(loadingImage, "rotation", 0f, 90f, 180f, 270f, 360f);
-        rotationAnimator.setDuration(2000);
-        rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
-
         switch (view.getId()){
             case R.id.login_button:
                 if (TextUtils.isEmpty(identificationNumber.getText()) || TextUtils.isEmpty(password.getText())){
@@ -110,31 +84,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     }
                 } else {
                     loadingLayout.setVisibility(View.VISIBLE);
+                    loginButton.setEnabled(false);
+                    loginButton.setClickable(false);
+                    //noinspection deprecation
+                    loginButton.setBackground(getResources().getDrawable(R.drawable.button_background_two));
+                    forgotPassword.setEnabled(false);
+                    forgotPassword.setClickable(false);
                     identificationTextInputLayout.setErrorEnabled(false);
                     passwordTextInputLayout.setErrorEnabled(false);
 
-
-
-//                    new Handler().postDelayed(new Runnable() {
-//                                                  @Override
-//                                                  public void run() {
-//                                                          if ("123456789".equals(identificationNumber.getText().toString())
-//                                                                  && "password".equals(password.getText().toString())){
-//                                                              startActivity(new Intent(Login.this, Main.class)
-//                                                              .putExtra(ID, identificationNumber.getText().toString())
-//                                                              .putExtra(PASSWORD, password.getText().toString()));
-//                                                              session.setLoggedIn(true);
-//                                                              session.setUserLoggedIn("Ayokunle Paul_123456789");
-//                                                              finish();
-//                                                          } else {
-//                                                              loadingLayout.setVisibility(View.GONE);
-////                                                              Toast.makeText(Login.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-//                                                              Snackbar.make(view, "Invalid username or password", Snackbar.LENGTH_SHORT).show();
-//                                                          }
-//                                                  }
-//                                              },
-//                            4000);
-//                    rotationAnimator.start();
+                    authenticateUser(view, identificationNumber.getText().toString(), password.getText().toString());
                 }
                 break;
             case R.id.forgot_password_button:
@@ -142,18 +101,58 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void authenticateUser(String username, String password){
-        authenticateUser.authenticateUser(username, password).enqueue(new Callback<Void>() {
+    @SuppressWarnings("ConstantConditions")
+    private void authenticateUser(final View view, final String username, final String password) {
+        loadingLayout.setVisibility(View.VISIBLE);
+        authenticateUser.authenticateUser(username, password).enqueue(new Callback<JSONResponseUser>() {
             @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                response.code();
+            public void onResponse(@NonNull Call<JSONResponseUser> call,@NonNull Response<JSONResponseUser> response) {
+                loadingLayout.setVisibility(View.GONE);
+                if (response.body() == null){
+                    Snackbar.make(view, "Invalid username or password", Snackbar.LENGTH_LONG).show();
+                    loginButton.setEnabled(true);
+                    loginButton.setClickable(true);
+                    //noinspection deprecation
+                    loginButton.setBackground(getResources().getDrawable(R.drawable.button_background));
+                    forgotPassword.setEnabled(true);
+                    forgotPassword.setClickable(true);
+                } else {
+                    token = response.body().getToken();
+                    user = response.body().getUser();
+                    SessionUtils.setAppToken(token);
+                    SessionUtils.setUserLoggedIn(user.getName());
+                    SessionUtils.setUserId(user.getUserId());
+                    startActivity(new Intent(Login.this, Main.class));
+                }
             }
 
             @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-
+            public void onFailure(@NonNull Call<JSONResponseUser> call, @NonNull Throwable t) {
+                loadingLayout.setVisibility(View.GONE);
+                loginButton.setEnabled(true);
+                loginButton.setClickable(true);
+                //noinspection deprecation
+                loginButton.setBackground(getResources().getDrawable(R.drawable.button_background));
+                forgotPassword.setEnabled(true);
+                forgotPassword.setClickable(true);
+                if (!NetworkUtils.isPhoneConnected(getApplicationContext())){
+                    Snackbar.make(view, "Network not available on the device.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    authenticateUser(view, username, password);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(view, "Unable to connect.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    authenticateUser(view, username, password);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
             }
         });
     }
-
 }

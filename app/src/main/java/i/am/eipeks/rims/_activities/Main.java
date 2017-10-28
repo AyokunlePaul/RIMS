@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims._authentication.Session;
+import i.am.eipeks.rims._utils.SessionUtils;
 import i.am.eipeks.rims._fragments.dashboard.Dashboard;
 import i.am.eipeks.rims._fragments.Feedback;
 import i.am.eipeks.rims._fragments.Home;
@@ -35,8 +35,6 @@ public class Main extends AppCompatActivity implements
 
     private DrawerLayout drawerLayout;
 
-    private NavigationView navigationView;
-
     private int currentItem;
 
     @SuppressWarnings("deprecation")
@@ -45,12 +43,8 @@ public class Main extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        Session session = new Session(this);
-
-        String owner_s_info_array[] = session.getUserLoggedIn().split("_");
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.rims_icon));
@@ -62,8 +56,8 @@ public class Main extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.setItemBackgroundResource(R.color.colorPrimaryDark);
 
-        owner_s_id.setText(owner_s_info_array[1].trim());
-        owner_s_info.setText(owner_s_info_array[0].trim());
+        owner_s_id.setText(SessionUtils.getUserId());
+        owner_s_info.setText(SessionUtils.getUserLoggedIn());
 
 
         setSupportActionBar(toolbar);

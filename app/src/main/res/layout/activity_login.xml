@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="i.am.eipeks.rims._authentication.Login"
     android:background="@drawable/background">
 
@@ -151,24 +152,11 @@
         android:visibility="gone"
         android:id="@+id/loading_layout">
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/rims_icon"
-            android:contentDescription="@string/rims_icon"
-            android:id="@+id/rims_custom_loading"
-            android:layout_centerInParent="true"/>
-
-        <TextView
+        <com.tuyenmonkey.mkloader.MKLoader
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/rims_custom_loading"
-            android:layout_marginTop="20dp"
-            android:padding="10dp"
-            android:text="@string/loading"
-            android:gravity="center"
-            android:textSize="25sp"
-            android:textColor="@android:color/white"/>
+            android:layout_height="match_parent"
+            app:mk_type="Sharingan"
+            app:mk_color="@color/colorPrimary"/>
 
     </RelativeLayout>
 

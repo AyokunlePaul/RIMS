@@ -31,7 +31,7 @@ import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
 import i.am.eipeks.rims._classes._network.AuthVehicle;
-import i.am.eipeks.rims._classes._network.JSONResponse;
+import i.am.eipeks.rims._classes._network.JSONResponseVehicle;
 import i.am.eipeks.rims._network.Auth;
 
 import retrofit2.Call;
@@ -78,8 +78,6 @@ public class Journey extends Fragment implements
         departurePark = rootView.findViewById(R.id.departure_park);
         routeFrom = rootView.findViewById(R.id.route_from);
         routeTo = rootView.findViewById(R.id.route_to);
-
-//        helper  = new VehicleDatabaseHelper(getContext());
 
         initializeSpinners();
 
@@ -148,9 +146,9 @@ public class Journey extends Fragment implements
 
     @SuppressWarnings("ConstantConditions")
     private void getVehicle(final View view, final String vehicleNumber){
-        auth.getVehicle(vehicleNumber).enqueue(new Callback<JSONResponse>() {
+        auth.getVehicle(vehicleNumber).enqueue(new Callback<JSONResponseVehicle>() {
             @Override
-            public void onResponse(@NonNull Call<JSONResponse> call, @NonNull Response<JSONResponse> response) {
+            public void onResponse(@NonNull Call<JSONResponseVehicle> call, @NonNull Response<JSONResponseVehicle> response) {
                 if (response.isSuccessful() && response.body().getAuthVehicle() != null){
                     loadingLayout.setVisibility(View.GONE);
                     //noinspection ConstantConditions
@@ -181,7 +179,7 @@ public class Journey extends Fragment implements
             }
 
             @Override
-            public void onFailure(@NonNull Call<JSONResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<JSONResponseVehicle> call, @NonNull Throwable t) {
                 //noinspection deprecation
                 Snackbar.make(view, "Network error", Snackbar.LENGTH_INDEFINITE)
                         .setAction("Retry", new View.OnClickListener() {

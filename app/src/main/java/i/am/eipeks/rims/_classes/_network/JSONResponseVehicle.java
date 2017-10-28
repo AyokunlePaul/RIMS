@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JSONResponse {
+public class JSONResponseVehicle {
     @SerializedName("vehicle")
     @Expose
     private AuthVehicle authVehicle;
