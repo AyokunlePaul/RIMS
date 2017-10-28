@@ -15,13 +15,14 @@ public interface Constants {
     String INTENT_DRIVER_INFORMATION_JOURNEY = "driver";
     String INTENT_VEHICLE_INFORMATION_JOURNEY = "vehicle";
     String LAST_ITEM_OUT_STATE = "last Item";
-    String INTENT_LOGIN_USERNAME = "loginUsername";
-    String INTENT_LOGIN_USER_ID = "loginUserId";
     String APP_TOKEN = "token";
     String USER_ID = "userId";
     String USER_NAME = "userName";
     String IS_LOGGED_IN = "loggedIn";
     String HAS_RUN_BEFORE = "hasRunBefore";
-
-
+    String HOUR_LOGGED_IN = "hour";
+    String YEAR_LOGGED_IN = "year";
+    String MONTH_LOGGED_IN = "month";
+    String DATE_LOGGED_IN = "date";
+    String MINUTE_LOGGED_IN = "minute";
 }

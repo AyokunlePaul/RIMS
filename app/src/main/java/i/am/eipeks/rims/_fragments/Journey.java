@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -34,6 +36,8 @@ import i.am.eipeks.rims._classes._network.AuthVehicle;
 import i.am.eipeks.rims._classes._network.JSONResponseVehicle;
 import i.am.eipeks.rims._network.Auth;
 
+
+import i.am.eipeks.rims._utils.SessionUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,6 +84,8 @@ public class Journey extends Fragment implements
         routeTo = rootView.findViewById(R.id.route_to);
 
         initializeSpinners();
+
+//        Toast.makeText(getContext(), SessionUtils.getAppToken(), Toast.LENGTH_SHORT).show();
 
         continueToLoad.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,17 +152,19 @@ public class Journey extends Fragment implements
 
     @SuppressWarnings("ConstantConditions")
     private void getVehicle(final View view, final String vehicleNumber){
-        auth.getVehicle(vehicleNumber).enqueue(new Callback<JSONResponseVehicle>() {
+        auth.getVehicle(vehicleNumber, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseVehicle> call, @NonNull Response<JSONResponseVehicle> response) {
                 if (response.isSuccessful() && response.body().getAuthVehicle() != null){
                     loadingLayout.setVisibility(View.GONE);
                     //noinspection ConstantConditions
                     authVehicle = response.body().getAuthVehicle();
-//                    Toast.makeText(getContext(), authVehicle.getName(), Toast.LENGTH_SHORT).show();
                     dialog.show();
                 } else {
                     loadingLayout.setVisibility(View.GONE);
+                    Toast toast = Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
                     switch (response.code()){
                         case 404:
                             //noinspection deprecation

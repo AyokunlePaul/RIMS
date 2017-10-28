@@ -31,6 +31,31 @@ public class SessionUtils {
         editor.commit();
     }
 
+    public static void setYearLoggedIn(int yearLoggedIn){
+        editor.putInt(Constants.YEAR_LOGGED_IN, yearLoggedIn);
+        editor.commit();
+    }
+
+    public static void setMonthLoggedIn(int monthLoggedIn){
+        editor.putInt(Constants.YEAR_LOGGED_IN, monthLoggedIn);
+        editor.commit();
+    }
+
+    public static void setDateLoggedIn(int dateLoggedIn){
+        editor.putInt(Constants.YEAR_LOGGED_IN, dateLoggedIn);
+        editor.commit();
+    }
+
+    public static void setHourLoggedIn(int hourLoggedIn){
+        editor.putInt(Constants.YEAR_LOGGED_IN, hourLoggedIn);
+        editor.commit();
+    }
+
+    public static void setMinuteLoggedIn(int minuteLoggedIn){
+        editor.putInt(Constants.MINUTE_LOGGED_IN, minuteLoggedIn);
+        editor.commit();
+    }
+
     public static void setUserLoggedIn(String user){
         editor.putString(Constants.USER_NAME, user);
         editor.commit();
@@ -45,14 +70,19 @@ public class SessionUtils {
 
     public static String getAppToken(){ return sharedPreferences.getString(Constants.APP_TOKEN, null); }
 
-    public static boolean isLoggedIn(){
-        return sharedPreferences.getBoolean(Constants.IS_LOGGED_IN, false);
-    }
+    public static boolean isLoggedIn(){ return sharedPreferences.getBoolean(Constants.IS_LOGGED_IN, false); }
 
-    public static String getUserLoggedIn(){
-        return sharedPreferences.getString(Constants.USER_NAME, null);
-    }
+    public static String getUserLoggedIn(){ return sharedPreferences.getString(Constants.USER_NAME, null); }
 
     public static String getUserId(){ return sharedPreferences.getString(Constants.USER_ID, null); }
 
+    public static int getMinuteLoggedIn(){ return sharedPreferences.getInt(Constants.MINUTE_LOGGED_IN, 0); }
+
+    public static int getHourLoggedIn(){ return sharedPreferences.getInt(Constants.HOUR_LOGGED_IN, 0); }
+
+    public static int getDateLoggedIn(){ return sharedPreferences.getInt(Constants.DATE_LOGGED_IN, 0); }
+
+    public static int getMonthLoggedIn(){ return sharedPreferences.getInt(Constants.MONTH_LOGGED_IN, 0); }
+
+    public static int getYearLoggedIn(){ return sharedPreferences.getInt(Constants.YEAR_LOGGED_IN, 0); }
 }

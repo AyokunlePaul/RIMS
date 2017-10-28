@@ -12,7 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import i.am.eipeks.rims.Constants;
+import java.util.Calendar;
+
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._activities.Main;
 import i.am.eipeks.rims._classes._network.AuthUser;
@@ -122,10 +123,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     SessionUtils.setAppToken(token);
                     SessionUtils.setUserLoggedIn(user.getName());
                     SessionUtils.setUserId(user.getUserId());
+                    SessionUtils.setLoggedIn(true);
+                    SessionUtils.setDateLoggedIn(Calendar.DATE);
+                    SessionUtils.setHourLoggedIn(Calendar.HOUR_OF_DAY);
+                    SessionUtils.setMonthLoggedIn(Calendar.MONTH);
+                    SessionUtils.setYearLoggedIn(Calendar.YEAR);
+                    SessionUtils.setMinuteLoggedIn(Calendar.MINUTE);
                     startActivity(new Intent(Login.this, Main.class));
                 }
             }
 
+            @SuppressWarnings("deprecation")
             @Override
             public void onFailure(@NonNull Call<JSONResponseUser> call, @NonNull Throwable t) {
                 loadingLayout.setVisibility(View.GONE);

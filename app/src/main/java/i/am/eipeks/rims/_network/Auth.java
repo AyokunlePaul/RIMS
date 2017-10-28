@@ -10,8 +10,8 @@ import i.am.eipeks.rims._classes._network.JSONResponseUser;
 import i.am.eipeks.rims._classes._network.JSONResponseVehicle;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -19,7 +19,7 @@ import retrofit2.http.Query;
 public interface Auth {
 
     @GET("get-vehicle/{vehicleId}?_token=our_token")
-    Call<JSONResponseVehicle> getVehicle(@Path("vehicleId") String vehicleId);
+    Call<JSONResponseVehicle> getVehicle(@Path("vehicleId") String vehicleId, @Header("Authorization") String authorization);
 
     @POST("post/{uuid}")
     Call<Vehicle> postTripInformation(@Path("uuid") String uuid, @Body Vehicle vehicle, @Body List<Passenger> passengers, @Body Trip trip);

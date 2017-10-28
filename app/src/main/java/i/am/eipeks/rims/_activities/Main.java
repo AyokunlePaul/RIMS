@@ -17,9 +17,13 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Calendar;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
+import i.am.eipeks.rims._authentication.Login;
 import i.am.eipeks.rims._utils.SessionUtils;
 import i.am.eipeks.rims._fragments.dashboard.Dashboard;
 import i.am.eipeks.rims._fragments.Feedback;
@@ -42,6 +46,13 @@ public class Main extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        if (SessionUtils.isLoggedIn()){
+
+        } else {
+            SessionUtils.setLoggedIn(false);
+            startActivity(new Intent(this, Login.class));
+        }
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -68,6 +79,7 @@ public class Main extends AppCompatActivity implements
         drawerLayout.addDrawerListener(toggle);
 
         toggle.syncState();
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -160,6 +172,27 @@ public class Main extends AppCompatActivity implements
         fragmentTransaction.commit();
         drawerLayout.closeDrawer(Gravity.START);
     }
+
+//    private boolean hasTokenExpired(){
+//        if (SessionUtils.getYearLoggedIn() == Calendar.YEAR){
+//            if (SessionUtils.getMonthLoggedIn() == Calendar.MONTH){
+//                if (SessionUtils.getDateLoggedIn() == Calendar.DATE){
+//                    if (SessionUtils.getHourLoggedIn() < Calendar.HOUR){
+//                        if (SessionUtils.getMinuteLoggedIn() == Calendar.MINUTE){
+//                            return true;
+//                        } else if (SessionUtils.getMinuteLoggedIn() < Calendar.MINUTE){
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                    return true;
+//                }
+//                return true;
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
