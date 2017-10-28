@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,13 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
         for (int seatAlreadySelected : seatNumberArray) {
             this.selectedSeatsList.remove(Integer.valueOf(seatAlreadySelected));
         }
+        hasSelectedOnce = false;
+    }
+
+    @Override
+    public void onViewRecycled(Holder holder) {
+        super.onViewRecycled(holder);
+        this.selectedSeat = 0;
         hasSelectedOnce = false;
     }
 
@@ -80,6 +88,8 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
                         hasSelectedOnce = true;
                     }
                 }
+
+                Toast.makeText(context, String.valueOf(getSelectedSeat()), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -41,15 +41,17 @@ public class RegisterPassenger extends AppCompatActivity{
 
     private int counter =  1, total = 0, radio, capacity;
     private boolean backPressedOnce = false;
-    private String uuid,totalNumberOfPassenger, registrationNumber, vehicleInformation, tripInformation, driverInformation;
+    private String uuid;
+    private String registrationNumber;
+    private String vehicleInformation;
+    private String tripInformation;
+    private String driverInformation;
 
     private EditText passengerName, passengerAddress, passengerPhone, nextOfKin, kinPhone;
     private TextInputLayout passengerNameTextInput, passengerAddressTextInput, passengerPhoneTextInput, nextOfKinTextInput, kinPhoneTextInput;
     private TextView currentSeat;
 
     private RecyclerView seatNumbers;
-
-    private SeatNumberAdapter seatNumberAdapter;
 
     private ArrayList<Integer> seatNumberArray = new ArrayList<>();
 
@@ -62,19 +64,12 @@ public class RegisterPassenger extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_passenger);
 
-        if (savedInstanceState != null){
-            uuid = savedInstanceState.getString("uuid-value");
-            vehicleInformation = savedInstanceState.getString("vehicle");
-            tripInformation = savedInstanceState.getString("trip");
-            driverInformation = savedInstanceState.getString("driver");
-            capacity = savedInstanceState.getInt("capacity");
-        } else {
-            uuid = UUID.randomUUID().toString();
-            vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
-            tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-            driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
-            capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
-        }
+        uuid = UUID.randomUUID().toString();
+        vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
+        tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
+        driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
+//        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
+        capacity = 5;
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
 
@@ -92,7 +87,7 @@ public class RegisterPassenger extends AppCompatActivity{
 
         seatNumbers = (RecyclerView) findViewById(R.id.seat_numbers);
 
-        seatNumberAdapter = new SeatNumberAdapter(this, capacity, seatNumberArray);
+        SeatNumberAdapter seatNumberAdapter = new SeatNumberAdapter(this, capacity, seatNumberArray);
 
         seatNumbers.setAdapter(seatNumberAdapter);
         seatNumbers.setLayoutManager(new GridLayoutManager(this, 10));
@@ -148,7 +143,7 @@ public class RegisterPassenger extends AppCompatActivity{
         switch (item.getItemId()){
             case R.id.next_menu:
                 if (item.getTitle().equals("DONE")){
-                    totalNumberOfPassenger = Integer.toString(total);
+                    String totalNumberOfPassenger = Integer.toString(total);
                     startActivity(new Intent(this, RegisterReview.class)
                             .putExtra(INTENT_TOTAL_NUMBER_OF_PASSENGERS, totalNumberOfPassenger)
                             .putExtra(INTENT_UUID, uuid)
@@ -181,7 +176,7 @@ public class RegisterPassenger extends AppCompatActivity{
                         }
 
                     } else {
-                        if (seatNumberAdapter.getSelectedSeat() == 0){
+                        if (((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat() == 0){
                             Toast.makeText(this, "No seat selected", Toast.LENGTH_SHORT).show();
                         } else if (sex == null){
                             Toast.makeText(this, "No gender selected", Toast.LENGTH_SHORT).show();
@@ -208,6 +203,7 @@ public class RegisterPassenger extends AppCompatActivity{
 
                                 @Override
                                 protected void onPostExecute(Void aVoid) {
+//                                    seatNumberAdapter.selectSeat(0);
                                     Toast.makeText(RegisterPassenger.this, "Done", Toast.LENGTH_SHORT).show();
                                     passengerName.setText("");
                                     passengerPhone.setText("");
@@ -215,13 +211,16 @@ public class RegisterPassenger extends AppCompatActivity{
                                     nextOfKin.setText("");
                                     kinPhone.setText("");
                                     counter += 1;
-                                    currentSeat.setText(String.valueOf(counter));
-                                    passengerName.setFocusable(true);
+
+                                    if (counter <= capacity){
+                                        currentSeat.setText(String.valueOf(counter));
+                                    }
+                                    Toast.makeText(RegisterPassenger.this, String.valueOf(total) + "\n" + seatNumberArray.toString(), Toast.LENGTH_SHORT).show();
                                     seatNumbers.swapAdapter(new SeatNumberAdapter(RegisterPassenger.this, capacity, seatNumberArray), true);
                                 }
                             }.execute();
 
-                            if (total == capacity){
+                            if (counter == capacity){
                                 item.setTitle("DONE");
                             }
                         }
@@ -256,16 +255,16 @@ public class RegisterPassenger extends AppCompatActivity{
         }
     }
 
-    public void gotoReview(View view){
-        totalNumberOfPassenger = Integer.toString(total);
-        startActivity(new Intent(this, RegisterReview.class)
-                .putExtra(INTENT_TOTAL_NUMBER_OF_PASSENGERS, totalNumberOfPassenger)
-                .putExtra(INTENT_UUID, uuid)
-                .putExtra(INTENT_REGISTRATION_NUMBER, registrationNumber)
-                .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverInformation)
-                .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripInformation)
-                .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleInformation));
-    }
+//    public void gotoReview(View view){
+//        totalNumberOfPassenger = Integer.toString(total);
+//        startActivity(new Intent(this, RegisterReview.class)
+//                .putExtra(INTENT_TOTAL_NUMBER_OF_PASSENGERS, totalNumberOfPassenger)
+//                .putExtra(INTENT_UUID, uuid)
+//                .putExtra(INTENT_REGISTRATION_NUMBER, registrationNumber)
+//                .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverInformation)
+//                .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripInformation)
+//                .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleInformation));
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

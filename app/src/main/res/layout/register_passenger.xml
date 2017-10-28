@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,6 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1"
+                tools:ignore="HardcodedText"
                 android:textSize="30sp"
                 android:fontFamily="cursive"
                 android:textStyle="bold"
@@ -27,6 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                tools:ignore="HardcodedText"
                 android:text=" of "
                 android:textSize="30sp"
                 android:fontFamily="cursive"
@@ -36,6 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="18"
+                tools:ignore="HardcodedText"
                 android:textSize="30sp"
                 android:fontFamily="cursive"
                 android:textStyle="bold"
@@ -180,22 +183,25 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_below="@id/information_layout"
-            android:padding="10dp">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="0dp"-->
+            <!--android:layout_below="@id/information_layout"-->
+            <!--android:padding="10dp">-->
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_background_one"
-                android:textColor="@android:color/white"
-                android:onClick="gotoReview"
-                android:text="@string/review"/>
+            <!--<Button-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/button_background_one"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:onClick="gotoReview"-->
+                <!--android:clickable="false"-->
+                <!--android:enabled="false"-->
+                <!--android:id="@+id/review"-->
+                <!--android:text="@string/review"/>-->
 
-        </RelativeLayout>
+        <!--</RelativeLayout>-->
 
     </RelativeLayout>
 

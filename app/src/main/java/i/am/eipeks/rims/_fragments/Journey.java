@@ -146,11 +146,12 @@ public class Journey extends Fragment implements
 
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void getVehicle(final View view, final String vehicleNumber){
         auth.getVehicle(vehicleNumber).enqueue(new Callback<JSONResponse>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponse> call, @NonNull Response<JSONResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body().getAuthVehicle() != null){
                     loadingLayout.setVisibility(View.GONE);
                     //noinspection ConstantConditions
                     authVehicle = response.body().getAuthVehicle();
@@ -170,8 +171,10 @@ public class Journey extends Fragment implements
                                         }
                                     }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                             break;
-                        case 400:
+                        default:
                             Snackbar.make(view, "Vehicle not registered", Snackbar.LENGTH_LONG).show();
+                            continueToLoad.setEnabled(true);
+                            continueToLoad.setClickable(true);
                             break;
                     }
                 }

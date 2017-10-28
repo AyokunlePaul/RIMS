@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,11 @@ import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._activities.Main;
 import i.am.eipeks.rims._classes.Authentication;
 import i.am.eipeks.rims._database.VehicleDatabaseHelper;
+import i.am.eipeks.rims._network.Auth;
+import i.am.eipeks.rims._utils.APIUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,6 +41,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private TextInputLayout identificationTextInputLayout, passwordTextInputLayout;
 
     private ArrayList<Authentication> authenticationInfo;
+
+    private Auth authenticateUser;
 
     private RelativeLayout loadingLayout;
 
@@ -52,6 +60,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         if (session.isLoggedIn()){
             startActivity(new Intent(this, Main.class));
         }
+
+        authenticateUser = APIUtils.getAuth();
 
         VehicleDatabaseHelper vehicleDatabaseHelper = new VehicleDatabaseHelper(this);
 
@@ -81,7 +91,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(final View view) {
-
         ImageView loadingImage = loadingLayout.findViewById(R.id.rims_custom_loading);
         ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(loadingImage, "rotation", 0f, 90f, 180f, 270f, 360f);
         rotationAnimator.setDuration(2000);
@@ -103,30 +112,48 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     loadingLayout.setVisibility(View.VISIBLE);
                     identificationTextInputLayout.setErrorEnabled(false);
                     passwordTextInputLayout.setErrorEnabled(false);
-                    new Handler().postDelayed(new Runnable() {
-                                                  @Override
-                                                  public void run() {
-                                                          if ("123456789".equals(identificationNumber.getText().toString())
-                                                                  && "password".equals(password.getText().toString())){
-                                                              startActivity(new Intent(Login.this, Main.class)
-                                                              .putExtra(ID, identificationNumber.getText().toString())
-                                                              .putExtra(PASSWORD, password.getText().toString()));
-                                                              session.setLoggedIn(true);
-                                                              session.setUserLoggedIn("Ayokunle Paul_123456789");
-                                                              finish();
-                                                          } else {
-                                                              loadingLayout.setVisibility(View.GONE);
-//                                                              Toast.makeText(Login.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-                                                              Snackbar.make(view, "Invalid username or password", Snackbar.LENGTH_SHORT).show();
-                                                          }
-                                                  }
-                                              },
-                            4000);
-                    rotationAnimator.start();
+
+
+
+//                    new Handler().postDelayed(new Runnable() {
+//                                                  @Override
+//                                                  public void run() {
+//                                                          if ("123456789".equals(identificationNumber.getText().toString())
+//                                                                  && "password".equals(password.getText().toString())){
+//                                                              startActivity(new Intent(Login.this, Main.class)
+//                                                              .putExtra(ID, identificationNumber.getText().toString())
+//                                                              .putExtra(PASSWORD, password.getText().toString()));
+//                                                              session.setLoggedIn(true);
+//                                                              session.setUserLoggedIn("Ayokunle Paul_123456789");
+//                                                              finish();
+//                                                          } else {
+//                                                              loadingLayout.setVisibility(View.GONE);
+////                                                              Toast.makeText(Login.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+//                                                              Snackbar.make(view, "Invalid username or password", Snackbar.LENGTH_SHORT).show();
+//                                                          }
+//                                                  }
+//                                              },
+//                            4000);
+//                    rotationAnimator.start();
                 }
                 break;
             case R.id.forgot_password_button:
                 break;
         }
     }
+
+    private void authenticateUser(String username, String password){
+        authenticateUser.authenticateUser(username, password).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                response.code();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
 }
