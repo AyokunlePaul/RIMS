@@ -4,43 +4,43 @@ package i.am.eipeks.rims._classes._network;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AuthVehicle {
+import java.util.Locale;
 
-    public AuthVehicle(){}
+public class AuthVehicle {
 
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("name")
+    @SerializedName("vehicle_name")
     @Expose
-    private String name;
-    @SerializedName("make")
+    private String vehicleName;
+    @SerializedName("vehicle_make")
     @Expose
-    private String make;
-    @SerializedName("capacity")
+    private String vehicleMake;
+    @SerializedName("vehicle_capacity")
     @Expose
-    private String capacity;
-    @SerializedName("weight")
+    private Integer vehicleCapacity;
+    @SerializedName("vehicle_weight")
     @Expose
-    private String weight;
-    @SerializedName("engine")
+    private String vehicleWeight;
+    @SerializedName("vehicle_engine")
     @Expose
-    private String engine;
+    private String vehicleEngine;
     @SerializedName("uuid")
     @Expose
     private String uuid;
-    @SerializedName("rt_sss")
+    @SerializedName("vehicle_rt_sss")
     @Expose
-    private String rtSss;
-    @SerializedName("registration_number")
+    private String vehicleRtSss;
+    @SerializedName("vehicle_registration_number")
     @Expose
-    private String registrationNumber;
+    private String vehicleRegistrationNumber;
     @SerializedName("created_at")
     @Expose
-    private Object createdAt;
+    private String createdAt;
     @SerializedName("updated_at")
     @Expose
-    private Object updatedAt;
+    private String updatedAt;
 
     public Integer getId() {
         return id;
@@ -50,44 +50,44 @@ public class AuthVehicle {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getVehicleName() {
+        return vehicleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setVehicleName(String vehicleName) {
+        this.vehicleName = vehicleName;
     }
 
-    public String getMake() {
-        return make;
+    public String getVehicleMake() {
+        return vehicleMake;
     }
 
-    public void setMake(String make) {
-        this.make = make;
+    public void setVehicleMake(String vehicleMake) {
+        this.vehicleMake = vehicleMake;
     }
 
-    public String getCapacity() {
-        return capacity;
+    public Integer getVehicleCapacity() {
+        return vehicleCapacity;
     }
 
-    public void setCapacity(String capacity) {
-        this.capacity = capacity;
+    public void setVehicleCapacity(Integer vehicleCapacity) {
+        this.vehicleCapacity = vehicleCapacity;
     }
 
-    public String getWeight() {
-        return weight;
+    public String getVehicleWeight() {
+        return vehicleWeight;
     }
 
-    public void setWeight(String weight) {
-        this.weight = weight;
+    public void setVehicleWeight(String vehicleWeight) {
+        this.vehicleWeight = vehicleWeight;
     }
 
-    public String getEngine() {
-        return engine;
+    public String getVehicleEngine() {
+        return vehicleEngine;
     }
 
-    public void setEngine(String engine) {
-        this.engine = engine;
+    public void setVehicleEngine(String vehicleEngine) {
+        this.vehicleEngine = vehicleEngine;
     }
 
     public String getUuid() {
@@ -98,36 +98,35 @@ public class AuthVehicle {
         this.uuid = uuid;
     }
 
-    public String getRtSss() {
-        return rtSss;
+    public String getVehicleRtSss() {
+        return vehicleRtSss;
     }
 
-    public void setRtSss(String rtSss) {
-        this.rtSss = rtSss;
+    public void setVehicleRtSss(String vehicleRtSss) {
+        this.vehicleRtSss = vehicleRtSss;
     }
 
-    public String getRegistrationNumber() {
-        return registrationNumber;
+    public String getVehicleRegistrationNumber() {
+        return vehicleRegistrationNumber;
     }
 
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
+    public void setVehicleRegistrationNumber(String vehicleRegistrationNumber) {
+        this.vehicleRegistrationNumber = vehicleRegistrationNumber;
     }
 
-    public Object getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Object createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Object getUpdatedAt() {
+    public String getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Object updatedAt) {
+    public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }

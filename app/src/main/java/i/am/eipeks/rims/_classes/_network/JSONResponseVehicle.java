@@ -8,13 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JSONResponseVehicle {
-    @SerializedName("vehicle")
-    @Expose
-    private AuthVehicle authVehicle;
 
     @SerializedName("status")
     @Expose
     private Integer status;
+
+    @SerializedName("vehicle")
+    @Expose
+    private AuthVehicle authVehicle;
+
+    public void setAuthVehicle(AuthVehicle authVehicle){
+        this.authVehicle = authVehicle;
+    }
+
+    public void setStatus(Integer status){
+        this.status = status;
+    }
 
     public AuthVehicle getAuthVehicle() {
         return authVehicle;

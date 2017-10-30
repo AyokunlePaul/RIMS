@@ -24,6 +24,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -84,8 +86,6 @@ public class Journey extends Fragment implements
         routeTo = rootView.findViewById(R.id.route_to);
 
         initializeSpinners();
-
-//        Toast.makeText(getContext(), SessionUtils.getAppToken(), Toast.LENGTH_SHORT).show();
 
         continueToLoad.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,20 +155,20 @@ public class Journey extends Fragment implements
         auth.getVehicle(vehicleNumber, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseVehicle> call, @NonNull Response<JSONResponseVehicle> response) {
-                if (response.isSuccessful() && response.body().getAuthVehicle() != null){
+                if (response.isSuccessful() && response.body().getStatus() == 200){
                     loadingLayout.setVisibility(View.GONE);
-                    //noinspection ConstantConditions
                     authVehicle = response.body().getAuthVehicle();
+
+//                    Toast.makeText(getContext(), String.valueOf(response.body().getAuthVehicle() == null), Toast.LENGTH_SHORT).show();
                     dialog.show();
+                    continueToLoad.setEnabled(true);
+                    continueToLoad.setClickable(true);
                 } else {
                     loadingLayout.setVisibility(View.GONE);
-                    Toast toast = Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
                     switch (response.code()){
                         case 404:
                             //noinspection deprecation
-                            Snackbar.make(view, "Error getting vehicle number", Snackbar.LENGTH_INDEFINITE)
+                            Snackbar.make(view, "Error getting vehicle number.", Snackbar.LENGTH_INDEFINITE)
                                     .setAction("Retry", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -178,7 +178,7 @@ public class Journey extends Fragment implements
                                     }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                             break;
                         default:
-                            Snackbar.make(view, "Vehicle not registered", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(view, "Vehicle not registered.", Snackbar.LENGTH_LONG).show();
                             continueToLoad.setEnabled(true);
                             continueToLoad.setClickable(true);
                             break;
@@ -189,7 +189,7 @@ public class Journey extends Fragment implements
             @Override
             public void onFailure(@NonNull Call<JSONResponseVehicle> call, @NonNull Throwable t) {
                 //noinspection deprecation
-                Snackbar.make(view, "Network error", Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(view, "Network error.", Snackbar.LENGTH_INDEFINITE)
                         .setAction("Retry", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -238,6 +238,8 @@ public class Journey extends Fragment implements
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        continueToLoad.setEnabled(true);
+                        continueToLoad.setClickable(true);
                         dialogInterface.dismiss();
                     }
                 }).setCancelable(false).create();
@@ -269,17 +271,17 @@ public class Journey extends Fragment implements
 
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-                    vehicleName.setText(authVehicle.getName());
-                    vehicleMake.setText(authVehicle.getMake());
-                    vehicleCapacity.setText(authVehicle.getCapacity());
-                    vehicleWeight.setText(authVehicle.getWeight());
-                    vehicleEngine.setText(authVehicle.getEngine());
-                    vehicleRTSSS.setText(authVehicle.getRtSss());
+                    vehicleName.setText(authVehicle.getVehicleName());
+                    vehicleMake.setText(authVehicle.getVehicleMake());
+                    vehicleCapacity.setText(String.valueOf(authVehicle.getVehicleCapacity()));
+                    vehicleWeight.setText(authVehicle.getVehicleWeight());
+                    vehicleEngine.setText(authVehicle.getVehicleEngine());
+                    vehicleRTSSS.setText(authVehicle.getVehicleRtSss());
 
                     vehicleIntent = String.format("%s_%s_%s_%s_%s_%s_%s",
-                            authVehicle.getName(), authVehicle.getMake(), authVehicle.getCapacity(),
-                            authVehicle.getWeight(), authVehicle.getEngine(), authVehicle.getRtSss(),
-                            authVehicle.getRegistrationNumber());
+                            authVehicle.getVehicleName(), authVehicle.getVehicleMake(), authVehicle.getVehicleCapacity(),
+                            authVehicle.getVehicleWeight(), authVehicle.getVehicleEngine(), authVehicle.getVehicleRtSss(),
+                            authVehicle.getVehicleRegistrationNumber());
 
                     Button button = ((AlertDialog) dialogInterface).getButton(AlertDialog.BUTTON_POSITIVE);
 
@@ -305,8 +307,8 @@ public class Journey extends Fragment implements
                                 protected void onPostExecute(Void aVoid) {
                                     loadingLayout.setVisibility(View.GONE);
                                     startActivity(new Intent(getContext(), RegisterPassenger.class)
-                                    .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getCapacity())
-                                    .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getRegistrationNumber())
+                                    .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getVehicleCapacity())
+                                    .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getVehicleRegistrationNumber())
                                     .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
                                     .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)
                                     .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleIntent));
@@ -320,4 +322,5 @@ public class Journey extends Fragment implements
             });
         }
     }
+
 }

@@ -89,7 +89,7 @@ public class SeatNumberAdapter extends RecyclerView.Adapter<SeatNumberAdapter.Ho
                     }
                 }
 
-                Toast.makeText(context, String.valueOf(getSelectedSeat()), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, String.valueOf(getSelectedSeat()), Toast.LENGTH_SHORT).show();
             }
         });
     }

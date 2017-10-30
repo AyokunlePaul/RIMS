@@ -205,4 +205,10 @@ public class Main extends AppCompatActivity implements
         selectItem(itemId);
     }
 
+    public void logOut(View view){
+        SessionUtils.setLoggedIn(false);
+        startActivity(new Intent(this, Login.class));
+    }
+
 }
+

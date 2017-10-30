@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/vehicle_name"
+        android:layout_below="@+id/vehicle_name"
         android:id="@+id/make_layout"
         android:paddingStart="10dp"
         android:paddingEnd="10dp">
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/make_layout"
+        android:layout_below="@+id/make_layout"
         android:id="@+id/capacity_layout"
         android:paddingStart="10dp"
         android:paddingEnd="10dp">
@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/capacity_layout"
+        android:layout_below="@+id/capacity_layout"
         android:id="@+id/weight_layout"
         android:paddingStart="10dp"
         android:paddingEnd="10dp">
@@ -88,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/weight_layout"
+        android:layout_below="@+id/weight_layout"
         android:id="@+id/engine_layout"
         android:paddingStart="10dp"
         android:paddingEnd="10dp">

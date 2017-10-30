@@ -5,9 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,14 +16,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -32,6 +37,13 @@ import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._adapters.SeatNumberAdapter;
 import i.am.eipeks.rims._classes.Passenger;
 import i.am.eipeks.rims._database.CentralDBHelper;
+import i.am.eipeks.rims._network.Auth;
+import i.am.eipeks.rims._utils.APIUtils;
+import i.am.eipeks.rims._utils.NetworkUtils;
+import i.am.eipeks.rims._utils.SessionUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterPassenger extends AppCompatActivity{
 
@@ -39,7 +51,9 @@ public class RegisterPassenger extends AppCompatActivity{
     public static final String INTENT_UUID = "UUID";
     public static final String INTENT_REGISTRATION_NUMBER = "registrationNumber";
 
-    private int counter =  1, total = 0, radio, capacity;
+    private int counter =  1;
+    private int radio;
+    private int capacity;
     private boolean backPressedOnce = false;
     private String uuid;
     private String registrationNumber;
@@ -59,10 +73,16 @@ public class RegisterPassenger extends AppCompatActivity{
 
     private CentralDBHelper centralDB;
 
+    private Auth auth;
+
+    private RelativeLayout loadingLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_passenger);
+
+        auth = APIUtils.getAuth();
 
         uuid = UUID.randomUUID().toString();
         vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
@@ -72,6 +92,7 @@ public class RegisterPassenger extends AppCompatActivity{
         capacity = 5;
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
+        loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
         passengerName = (EditText) findViewById(R.id.passenger_s_name);
         passengerAddress = (EditText) findViewById(R.id.passenger_s_address);
@@ -143,6 +164,7 @@ public class RegisterPassenger extends AppCompatActivity{
         switch (item.getItemId()){
             case R.id.next_menu:
                 if (item.getTitle().equals("DONE")){
+                    int total = 0;
                     String totalNumberOfPassenger = Integer.toString(total);
                     startActivity(new Intent(this, RegisterReview.class)
                             .putExtra(INTENT_TOTAL_NUMBER_OF_PASSENGERS, totalNumberOfPassenger)
@@ -185,40 +207,25 @@ public class RegisterPassenger extends AppCompatActivity{
                                     passengerAddress.getText().toString(), nextOfKin.getText().toString(),
                                     String.valueOf(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat()),
                                     kinPhone.getText().toString());
+                            passenger.setUuid(uuid);
 
-                            seatNumberArray.add(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat());
+                            JSONObject passengerObject = new JSONObject();
 
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected void onPreExecute() {
-                                    Toast.makeText(RegisterPassenger.this, "Adding passenger...", Toast.LENGTH_SHORT).show();
-                                }
+                            try {
+                                passengerObject.put("passenger_name", passengerName.getText().toString());
+                                passengerObject.put("passenger_phone", passengerPhone.getText().toString());
+                                passengerObject.put("passenger_sex", sex);
+                                passengerObject.put("passenger_address", passengerAddress.getText().toString());
+                                passengerObject.put("passenger_next_of_kin", nextOfKin.getText().toString());
+                                passengerObject.put("uuid", uuid);
+                                passengerObject.put("passenger_next_of_kin_phone", kinPhone.getText().toString());
+                                passengerObject.put("passenger_seat", String.valueOf(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat()));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    centralDB.addPassenger(passenger, uuid);
-                                    total += 1;
-                                    return null;
-                                }
-
-                                @Override
-                                protected void onPostExecute(Void aVoid) {
-//                                    seatNumberAdapter.selectSeat(0);
-                                    Toast.makeText(RegisterPassenger.this, "Done", Toast.LENGTH_SHORT).show();
-                                    passengerName.setText("");
-                                    passengerPhone.setText("");
-                                    passengerAddress.setText("");
-                                    nextOfKin.setText("");
-                                    kinPhone.setText("");
-                                    counter += 1;
-
-                                    if (counter <= capacity){
-                                        currentSeat.setText(String.valueOf(counter));
-                                    }
-                                    Toast.makeText(RegisterPassenger.this, String.valueOf(total) + "\n" + seatNumberArray.toString(), Toast.LENGTH_SHORT).show();
-                                    seatNumbers.swapAdapter(new SeatNumberAdapter(RegisterPassenger.this, capacity, seatNumberArray), true);
-                                }
-                            }.execute();
+                            sendPassenger(loadingLayout);
+//                            makeToast(new Gson().toJson(passenger));
 
                             if (counter == capacity){
                                 item.setTitle("DONE");
@@ -255,17 +262,6 @@ public class RegisterPassenger extends AppCompatActivity{
         }
     }
 
-//    public void gotoReview(View view){
-//        totalNumberOfPassenger = Integer.toString(total);
-//        startActivity(new Intent(this, RegisterReview.class)
-//                .putExtra(INTENT_TOTAL_NUMBER_OF_PASSENGERS, totalNumberOfPassenger)
-//                .putExtra(INTENT_UUID, uuid)
-//                .putExtra(INTENT_REGISTRATION_NUMBER, registrationNumber)
-//                .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverInformation)
-//                .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripInformation)
-//                .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleInformation));
-//    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("uuid-value", uuid);
@@ -273,6 +269,83 @@ public class RegisterPassenger extends AppCompatActivity{
         outState.putString("vehicle", vehicleInformation);
         outState.putString("driver", driverInformation);
         outState.putString("trip", tripInformation);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void sendPassenger(final View view){
+        loadingLayout.setVisibility(View.VISIBLE);
+        auth.sendPassenger(passenger.getPassengerName(), passenger.getPassengerPhone(), uuid,
+                passenger.getPassengerSex(), passenger.getPassengerAddress(), passenger.getNextOfKin(),
+                passenger.getSeatNumber(), passenger.getNextOfKinPhone(),
+                "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                loadingLayout.setVisibility(View.GONE);
+                //noinspection ConstantConditions
+
+                switch (response.code()){
+                    case 200:
+                        centralDB.addPassenger(passenger, uuid);
+                        passengerName.setText("");
+                        passengerPhone.setText("");
+                        passengerAddress.setText("");
+                        nextOfKin.setText("");
+                        kinPhone.setText("");
+                        counter += 1;
+                        if (counter <= capacity){
+                            currentSeat.setText(String.valueOf(counter));
+                        }
+                        seatNumberArray.add(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat());
+                        seatNumbers.swapAdapter(new SeatNumberAdapter(RegisterPassenger.this, capacity, seatNumberArray), true);
+                        makeToast("Passenger added.");
+                        break;
+                    case 400:
+                        //noinspection ConstantConditions
+//                        makeToast(response.);
+                        Snackbar.make(view, response.message(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Resend", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        sendPassenger(view);
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        Toast.makeText(RegisterPassenger.this, response.raw().toString(), Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        //noinspection ConstantConditions
+                        Snackbar.make(view, "Unknown error.", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Resend", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        sendPassenger(view);
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                loadingLayout.setVisibility(View.GONE);
+                if (NetworkUtils.isPhoneConnected(RegisterPassenger.this)){
+                    Snackbar.make(view, "Phone not connected.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    sendPassenger(view);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(view, "Unknown error.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    sendPassenger(view);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+        });
     }
 
     private class GridSpacing extends RecyclerView.ItemDecoration{
@@ -312,5 +385,11 @@ public class RegisterPassenger extends AppCompatActivity{
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    private void makeToast(String message){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }
