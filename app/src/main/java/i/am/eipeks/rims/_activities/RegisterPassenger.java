@@ -26,9 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -209,23 +206,7 @@ public class RegisterPassenger extends AppCompatActivity{
                                     kinPhone.getText().toString());
                             passenger.setUuid(uuid);
 
-                            JSONObject passengerObject = new JSONObject();
-
-                            try {
-                                passengerObject.put("passenger_name", passengerName.getText().toString());
-                                passengerObject.put("passenger_phone", passengerPhone.getText().toString());
-                                passengerObject.put("passenger_sex", sex);
-                                passengerObject.put("passenger_address", passengerAddress.getText().toString());
-                                passengerObject.put("passenger_next_of_kin", nextOfKin.getText().toString());
-                                passengerObject.put("uuid", uuid);
-                                passengerObject.put("passenger_next_of_kin_phone", kinPhone.getText().toString());
-                                passengerObject.put("passenger_seat", String.valueOf(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat()));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
                             sendPassenger(loadingLayout);
-//                            makeToast(new Gson().toJson(passenger));
 
                             if (counter == capacity){
                                 item.setTitle("DONE");
@@ -262,15 +243,6 @@ public class RegisterPassenger extends AppCompatActivity{
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString("uuid-value", uuid);
-        outState.putInt("capacity", capacity);
-        outState.putString("vehicle", vehicleInformation);
-        outState.putString("driver", driverInformation);
-        outState.putString("trip", tripInformation);
-    }
-
     @SuppressWarnings("deprecation")
     private void sendPassenger(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
@@ -301,7 +273,6 @@ public class RegisterPassenger extends AppCompatActivity{
                         break;
                     case 400:
                         //noinspection ConstantConditions
-//                        makeToast(response.);
                         Snackbar.make(view, response.message(), Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Resend", new View.OnClickListener() {
                                     @Override
