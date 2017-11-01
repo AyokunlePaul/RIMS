@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -14,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,7 +33,14 @@ import i.am.eipeks.rims._classes.SubTrip;
 import i.am.eipeks.rims._classes.Trip;
 import i.am.eipeks.rims._classes.Vehicle;
 import i.am.eipeks.rims._database.CentralDBHelper;
+import i.am.eipeks.rims._network.Auth;
+import i.am.eipeks.rims._utils.APIUtils;
+import i.am.eipeks.rims._utils.NetworkUtils;
+import i.am.eipeks.rims._utils.SessionUtils;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterReview extends AppCompatActivity{
 
@@ -40,9 +50,13 @@ public class RegisterReview extends AppCompatActivity{
 
     private ArrayList<Passenger> passengers;
 
+    private Auth auth;
+
     private SectionedRecyclerViewAdapter passengerAdapter, vehicleAdapter, tripAdapter;
 
     private RecyclerView vehicleRecycleView, passengersRecycleView, tripRecycleView;
+
+    private RelativeLayout loadingLayout;
 
     private Vehicle vehicle;
     private Trip trip;
@@ -53,6 +67,10 @@ public class RegisterReview extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review);
+
+        auth = APIUtils.getAuth();
+
+        loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
         getSupportActionBar().setSubtitle("Current Trip Information");
         getSupportActionBar().setTitle("RegisterReview Trip");
@@ -75,36 +93,18 @@ public class RegisterReview extends AppCompatActivity{
 
         centralDB = new CentralDBHelper(this);
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPreExecute() {
-                vehicleRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
-                tripRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
-                passengersRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
-                passengersRecycleView.addItemDecoration(new DividerItemDecoration(RegisterReview.this, DividerItemDecoration.VERTICAL));
-            }
+        vehicleRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
+        tripRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
+        passengersRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
+        passengersRecycleView.addItemDecoration(new DividerItemDecoration(RegisterReview.this, DividerItemDecoration.VERTICAL));
 
-            @Override
-            protected Void doInBackground(Void... voids) {
-                passengers = centralDB.getPassengers(uuid);
-                vehicle = new Vehicle(vehicleInformation);
-                trip = new Trip(tripInformation);
-                driver = new Driver(driverInformation);
-                return null;
-            }
+        passengerAdapter.addSection(new PassengerInformationSection(passengers, "Passengers"));
+        vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "Vehicle Information"));
+        tripAdapter.addSection(new TripInformationSection(RegisterReview.this, new SubTrip(trip, driver), "Trip Information"));
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                passengerAdapter.addSection(new PassengerInformationSection(passengers, "Passengers"));
-                vehicleAdapter.addSection(new VehicleInformationSection(vehicle, "AuthVehicle Information"));
-                tripAdapter.addSection(new TripInformationSection(RegisterReview.this, new SubTrip(trip, driver), "Trip Information"));
-
-                passengersRecycleView.setAdapter(passengerAdapter);
-                vehicleRecycleView.setAdapter(vehicleAdapter);
-                tripRecycleView.setAdapter(tripAdapter);
-            }
-        }.execute();
-
+        passengersRecycleView.setAdapter(passengerAdapter);
+        vehicleRecycleView.setAdapter(vehicleAdapter);
+        tripRecycleView.setAdapter(tripAdapter);
     }
 
     @Override
@@ -137,24 +137,7 @@ public class RegisterReview extends AppCompatActivity{
                         deleteButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View view) {
-                                new AsyncTask<Void, Void, Void>() {
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        Toast.makeText(RegisterReview.this, "Deleting...", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    protected Void doInBackground(Void... voids) {
-                                        return null;
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Void aVoid) {
-                                        Toast.makeText(RegisterReview.this, "Deleted.", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(RegisterReview.this, Main.class));
-                                    }
-                                }.execute();
+                                deleteTrip(view);
                             }
                         });
                     }
@@ -176,27 +159,27 @@ public class RegisterReview extends AppCompatActivity{
                             }).setPositiveButton("Add", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        new AsyncTask<Void, Void, Void>() {
-                                            @Override
-                                            protected void onPreExecute() {
-
-                                            }
-
-                                            @Override
-                                            protected Void doInBackground(Void... voids) {
-                                                centralDB.addTrip(trip, uuid);
-                                                centralDB.addVehicle(vehicle, uuid);
-                                                centralDB.addDriver(driver, uuid);
-                                                centralDB.modifyTrip(totalNumberOfPassengers, uuid);
-                                                return null;
-                                            }
-
-                                            @Override
-                                            protected void onPostExecute(Void aVoid) {
-                                                Toast.makeText(RegisterReview.this, "Done", Toast.LENGTH_SHORT).show();
-                                                startActivity(new Intent(RegisterReview.this, Main.class));
-                                            }
-                                        }.execute();
+//                                        new AsyncTask<Void, Void, Void>() {
+//                                            @Override
+//                                            protected void onPreExecute() {
+//
+//                                            }
+//
+//                                            @Override
+//                                            protected Void doInBackground(Void... voids) {
+//                                                centralDB.addTrip(trip, uuid);
+//                                                centralDB.addVehicle(vehicle, uuid);
+//                                                centralDB.addDriver(driver, uuid);
+//                                                centralDB.modifyTrip(totalNumberOfPassengers, uuid);
+//                                                return null;
+//                                            }
+//
+//                                            @Override
+//                                            protected void onPostExecute(Void aVoid) {
+//                                                Toast.makeText(RegisterReview.this, "Done", Toast.LENGTH_SHORT).show();
+//                                                startActivity(new Intent(RegisterReview.this, Main.class));
+//                                            }
+//                                        }.execute();
                                     }
                             }).create().show();
                 }
@@ -204,4 +187,88 @@ public class RegisterReview extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void deleteTrip(final View view){
+        auth.deleteTrip(uuid, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                switch (response.code()){
+                    case 200:
+                        deleteDriver(view);
+                        break;
+                    default:
+                        Snackbar.make(view, "Couldn't add trip to database. ", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (NetworkUtils.isPhoneConnected(RegisterReview.this)){
+                    Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(view, "Trip deletion: Unknown error. ", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+        });
+    }
+
+    private void deleteDriver(final View view){
+        auth.deleteDriver(uuid, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                switch (response.code()){
+                    case 200:
+                        break;
+                    default:
+                        Snackbar.make(view, "Couldn't add trip to database. ", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (NetworkUtils.isPhoneConnected(RegisterReview.this)){
+                    Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(view, "Trip deletion: Unknown error. ", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+        });
+    }
+
 }
