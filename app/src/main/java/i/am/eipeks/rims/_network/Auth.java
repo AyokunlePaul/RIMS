@@ -1,9 +1,10 @@
 package i.am.eipeks.rims._network;
 
 
-import i.am.eipeks.rims._classes._network.JSONPassenger;
-import i.am.eipeks.rims._classes._network.JSONResponseUser;
-import i.am.eipeks.rims._classes._network.JSONResponseVehicle;
+import i.am.eipeks.rims._classes._auth_class.AuthPassenger;
+import i.am.eipeks.rims._classes._auth_class.JSONResponseTrip;
+import i.am.eipeks.rims._classes._auth_class.JSONResponseUser;
+import i.am.eipeks.rims._classes._auth_class.JSONResponseVehicle;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -18,19 +19,19 @@ public interface Auth {
 
     @Multipart
     @POST("passenger")
-    Call<Void> sendPassenger(@Part("passenger_name") String passengerName, @Part("passenger_phone") String passengerPhone,
-                             @Part("uuid") String uuid, @Part("passenger_sex") String passengerSex,
-                             @Part("passenger_address") String passengerAddress, @Part("passenger_next_of_kin") String passengerNextOfKin,
-                             @Part("passenger_seat") String passengerSeat, @Part("passenger_next_of_kin_phone") String nextOfKinPhone,
+    Call<Void> sendPassenger(@Part("name") String passengerName, @Part("phone") String passengerPhone,
+                             @Part("sex") String passengerSex, @Part("address") String passengerAddress,
+                             @Part("next_of_kin") String passengerNextOfKin, @Part("seat") Integer passengerSeat,
+                             @Part("passenger_next_of_kin_phone") String nextOfKinPhone, @Part("trip_id") String tripId,
                              @Header("Authorization") String authorization);
 
-    @GET("get-passengers/{uuid}")
-    Call<JSONPassenger> getPassenger(@Path("uuid") String uuid);
+    @GET("passenger/{uuid}")
+    Call<AuthPassenger> getPassenger(@Path("uuid") String uuid);
 
     @DELETE("passenger/{uuid}")
     Call<Void> deletePassenger(@Path("uuid") String uuid);
 
-    @GET("get-vehicle/{vehicleId}")
+    @GET("vehicle/{vehicleId}")
     Call<JSONResponseVehicle> getVehicle(@Path("vehicleId") String vehicleId, @Header("Authorization") String authorization);
 
     @DELETE("vehicle/{registration_number}")
@@ -45,16 +46,16 @@ public interface Auth {
 
     @Multipart
     @POST("trip")
-    Call<Void> addTrip(@Part("date_and_time") String dateAndTime, @Part("displacement") String displacement,
-                       @Part("departure_information") String departureInformation, @Part("calendar_date") String date,
-                       @Part("calendar_month") String month, @Part("calendar_year") String year,
-                       @Part("uuid") String uuid, @Part("total_number_of_passengers") String passengers,
-                       @Header("Authorization") String header);
+    Call<JSONResponseTrip> addTrip(@Part("date_and_time") String dateAndTime, @Part("displacement") String displacement,
+                                   @Part("departure_information") String departureInformation, @Part("calendar_date") String date,
+                                   @Part("calendar_month") String month, @Part("calendar_year") String year,
+                                   @Part("uuid") String uuid, @Part("total_number_of_passengers") String passengers,
+                                   @Header("Authorization") String header);
 
     @DELETE("trip/{uuid}")
     Call<Void> deleteTrip(@Path("uuid") String uuid, @Header("Authorization") String authorization);
 
-    @GET("get-trip/{uuid}")
+    @GET("trip/{uuid}")
     Call<Void> getTrip(@Path("uuid") String uuid, @Header("Authorization") String authorization);
 
     @Multipart

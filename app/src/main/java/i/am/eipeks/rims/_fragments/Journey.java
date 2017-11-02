@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +21,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -34,8 +30,8 @@ import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
-import i.am.eipeks.rims._classes._network.AuthVehicle;
-import i.am.eipeks.rims._classes._network.JSONResponseVehicle;
+import i.am.eipeks.rims._classes._auth_class.AuthVehicle;
+import i.am.eipeks.rims._classes._auth_class.JSONResponseVehicle;
 import i.am.eipeks.rims._network.Auth;
 
 
@@ -151,8 +147,8 @@ public class Journey extends Fragment implements
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void getVehicle(final View view, final String vehicleNumber){
-        auth.getVehicle(vehicleNumber, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
+    private void getVehicle(final View view, final String vehicleId){
+        auth.getVehicle(vehicleId, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseVehicle> call, @NonNull Response<JSONResponseVehicle> response) {
                 if (response.isSuccessful() && response.body().getStatus() == 200){
@@ -173,7 +169,7 @@ public class Journey extends Fragment implements
                                         @Override
                                         public void onClick(View v) {
                                             loadingLayout.setVisibility(View.VISIBLE);
-                                            getVehicle(view, vehicleNumber);
+                                            getVehicle(view, vehicleId);
                                         }
                                     }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                             break;
@@ -194,7 +190,7 @@ public class Journey extends Fragment implements
                             @Override
                             public void onClick(View v) {
                                 loadingLayout.setVisibility(View.VISIBLE);
-                                getVehicle(view, vehicleNumber);
+                                getVehicle(view, vehicleId);
                             }
                         }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 loadingLayout.setVisibility(View.GONE);

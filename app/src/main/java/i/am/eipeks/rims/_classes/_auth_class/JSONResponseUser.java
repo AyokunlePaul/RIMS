@@ -1,4 +1,4 @@
-package i.am.eipeks.rims._classes._network;
+package i.am.eipeks.rims._classes._auth_class;
 
 
 import com.google.gson.annotations.Expose;

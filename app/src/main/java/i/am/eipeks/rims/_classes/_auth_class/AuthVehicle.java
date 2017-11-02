@@ -1,38 +1,35 @@
-package i.am.eipeks.rims._classes._network;
+package i.am.eipeks.rims._classes._auth_class;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Locale;
+import java.util.List;
 
 public class AuthVehicle {
 
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("vehicle_name")
+    @SerializedName("name")
     @Expose
     private String vehicleName;
-    @SerializedName("vehicle_make")
+    @SerializedName("make")
     @Expose
     private String vehicleMake;
-    @SerializedName("vehicle_capacity")
+    @SerializedName("capacity")
     @Expose
     private Integer vehicleCapacity;
-    @SerializedName("vehicle_weight")
+    @SerializedName("weight")
     @Expose
     private String vehicleWeight;
-    @SerializedName("vehicle_engine")
+    @SerializedName("engine")
     @Expose
     private String vehicleEngine;
-    @SerializedName("uuid")
-    @Expose
-    private String uuid;
-    @SerializedName("vehicle_rt_sss")
+    @SerializedName("rtsss")
     @Expose
     private String vehicleRtSss;
-    @SerializedName("vehicle_registration_number")
+    @SerializedName("reg_number")
     @Expose
     private String vehicleRegistrationNumber;
     @SerializedName("created_at")
@@ -41,6 +38,9 @@ public class AuthVehicle {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+    @SerializedName("trips")
+    @Expose
+    private List<AuthTrip> trips;
 
     public Integer getId() {
         return id;
@@ -90,14 +90,6 @@ public class AuthVehicle {
         this.vehicleEngine = vehicleEngine;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     public String getVehicleRtSss() {
         return vehicleRtSss;
     }
@@ -128,5 +120,13 @@ public class AuthVehicle {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<AuthTrip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<AuthTrip> trips) {
+        this.trips = trips;
     }
 }
