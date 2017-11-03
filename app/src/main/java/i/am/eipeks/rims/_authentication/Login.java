@@ -16,8 +16,8 @@ import java.util.Calendar;
 
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._activities.Main;
-import i.am.eipeks.rims._classes._auth_class.AuthUser;
-import i.am.eipeks.rims._classes._auth_class.JSONResponseUser;
+import i.am.eipeks.rims._classes._auth_class._auth_pojo.AuthUser;
+import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseUser;
 import i.am.eipeks.rims._network.Auth;
 import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._utils.NetworkUtils;

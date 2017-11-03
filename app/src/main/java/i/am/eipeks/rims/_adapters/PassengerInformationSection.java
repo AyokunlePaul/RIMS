@@ -5,10 +5,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims._classes.Passenger;
+import i.am.eipeks.rims._classes._model_class.Passenger;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
@@ -16,10 +16,10 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
 public class PassengerInformationSection extends StatelessSection {
 
-    private ArrayList<Passenger> passengers;
+    private List<Passenger> passengers;
     private String header;
 
-    public PassengerInformationSection(ArrayList<Passenger> passengers, String header) {
+    public PassengerInformationSection(List<Passenger> passengers, String header) {
         super(new SectionParameters.Builder(R.layout.card_view_passenger_information_trip)
                 .headerResourceId(R.layout.section_header).build());
 
@@ -77,14 +77,14 @@ public class PassengerInformationSection extends StatelessSection {
 
         ItemHolder(View itemView) {
             super(itemView);
-            passengerName = (TextView) itemView.findViewById(R.id.card_view_passenger_name_passenger_information);
-            passengerPhoneNumber = (TextView) itemView.findViewById(R.id.card_view_passenger_phone_number_passenger_information);
-            passengerSeatNumber = (TextView) itemView.findViewById(R.id.card_view_passenger_seat_passenger_information);
-            passengerAddress = (TextView) itemView.findViewById(R.id.card_view_passenger_address_passenger_information);
-            passengerNextOfKin = (TextView) itemView.findViewById(R.id.card_view_passenger_next_of_kin_passenger_information);
-            passengerNextOfKinPhone = (TextView) itemView.findViewById(R.id.card_view_passenger_next_of_kin_phone_number_passenger_information);
+            passengerName = itemView.findViewById(R.id.card_view_passenger_name_passenger_information);
+            passengerPhoneNumber = itemView.findViewById(R.id.card_view_passenger_phone_number_passenger_information);
+            passengerSeatNumber = itemView.findViewById(R.id.card_view_passenger_seat_passenger_information);
+            passengerAddress = itemView.findViewById(R.id.card_view_passenger_address_passenger_information);
+            passengerNextOfKin = itemView.findViewById(R.id.card_view_passenger_next_of_kin_passenger_information);
+            passengerNextOfKinPhone = itemView.findViewById(R.id.card_view_passenger_next_of_kin_phone_number_passenger_information);
 
-            sex = (Button) itemView.findViewById(R.id.card_view_passenger_sex_passenger_information);
+            sex = itemView.findViewById(R.id.card_view_passenger_sex_passenger_information);
         }
     }
 
@@ -94,7 +94,7 @@ public class PassengerInformationSection extends StatelessSection {
 
         HeaderHolder(View itemView) {
             super(itemView);
-            header = (TextView) itemView.findViewById(R.id.section_header);
+            header = itemView.findViewById(R.id.section_header);
         }
     }
 }

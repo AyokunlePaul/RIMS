@@ -1,4 +1,4 @@
-package i.am.eipeks.rims._classes._auth_class;
+package i.am.eipeks.rims._classes._auth_class._auth_pojo;
 
 
 import com.google.gson.annotations.Expose;

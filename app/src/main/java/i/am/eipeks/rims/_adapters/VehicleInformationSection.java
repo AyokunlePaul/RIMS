@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims._classes.Vehicle;
+import i.am.eipeks.rims._classes._model_class.Vehicle;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 

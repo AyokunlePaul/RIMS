@@ -3,7 +3,6 @@ package i.am.eipeks.rims._fragments;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -23,18 +22,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
+import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseTrip;
 import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
-import i.am.eipeks.rims._classes._auth_class.AuthVehicle;
-import i.am.eipeks.rims._classes._auth_class.JSONResponseVehicle;
+import i.am.eipeks.rims._classes._auth_class._auth_pojo.AuthVehicle;
+import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseVehicle;
 import i.am.eipeks.rims._network.Auth;
 
 
+import i.am.eipeks.rims._utils.NetworkUtils;
 import i.am.eipeks.rims._utils.SessionUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +46,7 @@ import retrofit2.Response;
 public class Journey extends Fragment implements
         AdapterView.OnItemSelectedListener {
 
-    private String driverIntent, vehicleIntent, tripIntent;
+    private String driverIntent, vehicleIntent, tripIntent, displacement;
 
     private Spinner departureState, departurePark, routeFrom, routeTo;
     private Button continueToLoad;
@@ -148,14 +151,13 @@ public class Journey extends Fragment implements
 
     @SuppressWarnings("ConstantConditions")
     private void getVehicle(final View view, final String vehicleId){
-        auth.getVehicle(vehicleId, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
+        auth.getVehicle(Integer.valueOf(vehicleId), "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseVehicle> call, @NonNull Response<JSONResponseVehicle> response) {
                 if (response.isSuccessful() && response.body().getStatus() == 200){
                     loadingLayout.setVisibility(View.GONE);
                     authVehicle = response.body().getAuthVehicle();
-
-//                    Toast.makeText(getContext(), String.valueOf(response.body().getAuthVehicle() == null), Toast.LENGTH_SHORT).show();
+                    SessionUtils.setCurrentTripId(authVehicle.getId());
                     dialog.show();
                     continueToLoad.setEnabled(true);
                     continueToLoad.setClickable(true);
@@ -210,7 +212,7 @@ public class Journey extends Fragment implements
         String calendarYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 
         String departure = String.format("%s, %s", departureState.getSelectedItem().toString(), departurePark.getSelectedItem().toString());
-        String displacement = String.format("%s - %s", routeFrom.getSelectedItem().toString(), routeTo.getSelectedItem().toString());
+        displacement = String.format("%s - %s", routeFrom.getSelectedItem().toString(), routeTo.getSelectedItem().toString());
 
         driver_sNameTextInputLayout.setErrorEnabled(false);
         driver_sPhoneTextInputLayout.setErrorEnabled(false);
@@ -286,37 +288,140 @@ public class Journey extends Fragment implements
                         public void onClick(View view) {
 
                             dialog.dismiss();
-
-                            new AsyncTask<Void, Void, Void>() {
-
-                                @Override
-                                protected void onPreExecute() {
-                                    loadingLayout.setVisibility(View.VISIBLE);
-                                }
-
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    return null;
-                                }
-
-                                @Override
-                                protected void onPostExecute(Void aVoid) {
-                                    loadingLayout.setVisibility(View.GONE);
-                                    startActivity(new Intent(getContext(), RegisterPassenger.class)
-                                    .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getVehicleCapacity())
-                                    .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getVehicleRegistrationNumber())
-                                    .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
-                                    .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)
-                                    .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleIntent));
-                                    getActivity().finish();
-                                }
-                            }.execute();
+                            registerTrip(view);
                         }
                     });
                 }
 
             });
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void registerTrip(final View view){
+        loadingLayout.setVisibility(View.VISIBLE);
+        auth.addTrip(getCurrentDateTime(), displacement, "Bearer " + SessionUtils.getAppToken(),
+                SessionUtils.getCurrentVehicleId()).enqueue(new Callback<JSONResponseTrip>() {
+            @Override
+            public void onResponse(@NonNull Call<JSONResponseTrip> call, @NonNull Response<JSONResponseTrip> response) {
+                switch (response.code()){
+                    case 200:
+                        SessionUtils.setCurrentTripId(response.body().getTrip().getTripId());
+                        addDriver(view);
+                        break;
+                    case 400:
+                        loadingLayout.setVisibility(View.GONE);
+                        if (response.body().getMessage() != null){
+                            Snackbar.make(view, response.body().getMessage(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            registerTrip(view);
+                                        }
+                                    }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        } else {
+                            Snackbar.make(view, response.message(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            registerTrip(view);
+                                        }
+                                    }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        }
+                        break;
+                    default:
+                        Snackbar.make(view, "Unexpected error occurred.", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        registerTrip(view);
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JSONResponseTrip> call, @NonNull Throwable t) {
+                loadingLayout.setVisibility(View.GONE);
+                if (NetworkUtils.isPhoneConnected(getActivity())){
+                    Snackbar.make(view, "Phone not connected.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    registerTrip(view);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(view, "Unknown error. Couldn't register trip.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    registerTrip(view);
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+        });
+    }
+
+    private void addDriver(final View view){
+        if (!(loadingLayout.getVisibility() == View.VISIBLE)){
+            loadingLayout.setVisibility(View.VISIBLE);
+        }
+        auth.sendDriver(driver_sName.getText().toString(), driver_sPhone.getText().toString(),
+                "Bearer " + SessionUtils.getAppToken(),
+                SessionUtils.getCurrentTripId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                loadingLayout.setVisibility(View.GONE);
+                switch (response.code()){
+                    case 200:
+                        startActivity(new Intent(getContext(), RegisterPassenger.class)
+                                .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getVehicleCapacity())
+                                .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getVehicleRegistrationNumber())
+                                .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
+                                .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)
+                                .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleIntent));
+                        getActivity().finish();
+                        break;
+                    default:
+                        Snackbar.make(view, "Couldn't upload driver information. ", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        addDriver(view);
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                loadingLayout.setVisibility(View.GONE);
+                if (NetworkUtils.isPhoneConnected(getContext())){
+                    Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(view, "Driver information upload: Unknown error. ", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+        });
+    }
+
+    private String getCurrentDateTime(){
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
     }
 
 }

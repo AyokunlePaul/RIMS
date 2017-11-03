@@ -27,16 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._adapters.SeatNumberAdapter;
-import i.am.eipeks.rims._classes.Driver;
-import i.am.eipeks.rims._classes.Passenger;
-import i.am.eipeks.rims._classes.Trip;
-import i.am.eipeks.rims._classes.Vehicle;
-import i.am.eipeks.rims._database.CentralDBHelper;
+import i.am.eipeks.rims._classes._model_class.Passenger;
 import i.am.eipeks.rims._network.Auth;
 import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._utils.NetworkUtils;
@@ -46,22 +41,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterPassenger extends AppCompatActivity{
+    private String vehicleIntent, tripIntent, driverIntent;
 
-    public static final String INTENT_TOTAL_NUMBER_OF_PASSENGERS = "Total";
-    public static final String INTENT_UUID = "UUID";
-    public static final String INTENT_REGISTRATION_NUMBER = "registrationNumber";
-
-    private int counter =  1;
-    private int radio;
-    private int capacity;
+    private int counter =  1, radio, capacity, total = 0;
     private boolean backPressedOnce = false;
-    private String uuid;
-    private String registrationNumber;
 
     private EditText passengerName, passengerAddress, passengerPhone, nextOfKin, kinPhone;
     private TextInputLayout passengerNameTextInput, passengerAddressTextInput, passengerPhoneTextInput, nextOfKinTextInput, kinPhoneTextInput;
     private TextView currentSeat;
-    private MenuItem currentItem;
+    private MenuItem nextItem, doneItem;
 
     private RecyclerView seatNumbers;
 
@@ -69,15 +57,9 @@ public class RegisterPassenger extends AppCompatActivity{
 
     private Passenger passenger;
 
-    private CentralDBHelper centralDB;
-
     private Auth auth;
 
     private RelativeLayout loadingLayout;
-
-    private Trip trip;
-    private Vehicle vehicle;
-    private Driver driver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,17 +68,11 @@ public class RegisterPassenger extends AppCompatActivity{
 
         auth = APIUtils.getAuth();
 
-        uuid = UUID.randomUUID().toString();
-
-        String vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
-        String tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-        String driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
+        vehicleIntent = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
+        driverIntent = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
+        tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
 //        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
         capacity = 5;
-
-        vehicle = new Vehicle(vehicleInformation);
-        trip = new Trip(tripInformation);
-        driver = new Driver(driverInformation);
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
@@ -124,17 +100,12 @@ public class RegisterPassenger extends AppCompatActivity{
         RadioGroup sex = (RadioGroup) findViewById(R.id.sex);
         sex.getChildAt(0).setSelected(true);
 
-        centralDB = new CentralDBHelper(this);
-
         sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 radio = radioGroup.getCheckedRadioButtonId();
             }
         });
-
-        registrationNumber = getIntent().getStringExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY);
-
         currentSeat = (TextView) findViewById(R.id.seat_count);
 
         currentSeat.setText(String.valueOf(counter));
@@ -144,6 +115,8 @@ public class RegisterPassenger extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.vehicle_information_menu, menu);
+        doneItem = menu.findItem(R.id.done_menu);
+        nextItem = menu.findItem(R.id.next_menu);
         return true;
     }
 
@@ -154,8 +127,6 @@ public class RegisterPassenger extends AppCompatActivity{
         passengerPhoneTextInput.setErrorEnabled(false);
         nextOfKinTextInput.setErrorEnabled(false);
         kinPhoneTextInput.setErrorEnabled(false);
-
-//        currentItem = MenuItem.;
 
         String sex;
 
@@ -170,13 +141,32 @@ public class RegisterPassenger extends AppCompatActivity{
                 sex = null;
         }
 
+        if (total >= 1 && !doneItem.isEnabled()){
+            doneItem.setEnabled(true);
+        }
+
         switch (item.getItemId()){
             case R.id.done_menu:
-                addTrip(loadingLayout);
+                new AlertDialog.Builder(this)
+                        .setMessage("Are all passengers registered?")
+                        .setPositiveButton("Yes, They are", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(RegisterPassenger.this, RegisterReview.class)
+                                        .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleIntent)
+                                        .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)
+                                        .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
+                                );
+                            }
+                        }).setNegativeButton("No, Take me back", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                }).create().show();
                 break;
 
             case R.id.next_menu:
-                currentItem = item;
                 if (TextUtils.isEmpty(passengerName.getText()) || TextUtils.isEmpty(passengerPhone.getText())
                         || TextUtils.isEmpty(passengerName.getText()) || TextUtils.isEmpty(passengerPhone.getText())
                         || TextUtils.isEmpty(passengerPhone.getText())){
@@ -209,7 +199,6 @@ public class RegisterPassenger extends AppCompatActivity{
                                 passengerAddress.getText().toString(), nextOfKin.getText().toString(),
                                 String.valueOf(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat()),
                                 kinPhone.getText().toString());
-                        passenger.setUuid(uuid);
 
                         sendPassenger(loadingLayout);
                     }
@@ -222,42 +211,39 @@ public class RegisterPassenger extends AppCompatActivity{
     @Override
     public void onBackPressed() {
         if (!backPressedOnce){
+            backPressedOnce = true;
             new AlertDialog.Builder(this)
                     .setMessage("Cancel trip registration?")
-                    .setTitle("Cancel")
+                    .setTitle("Trip Registration")
                     .setPositiveButton("Cancel trip", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            deletePassenger(loadingLayout);
-
+                            deleteTrip(loadingLayout);
                         }
                     }).setNegativeButton("Back", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+                            backPressedOnce = false;
                         }
                     })
                     .create().show();
-        } else {
-            backPressedOnce = true;
         }
     }
 
     @SuppressWarnings("deprecation")
     private void sendPassenger(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
-        auth.sendPassenger(passenger.getPassengerName(), passenger.getPassengerPhone(), uuid,
+        auth.sendPassenger(passenger.getPassengerName(), passenger.getPassengerPhone(),
                 passenger.getPassengerSex(), passenger.getPassengerAddress(), passenger.getNextOfKin(),
-                passenger.getSeatNumber(), passenger.getNextOfKinPhone(),
-                "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
+                Integer.valueOf(passenger.getSeatNumber()), passenger.getNextOfKinPhone(),
+                SessionUtils.getCurrentTripId(),"Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 loadingLayout.setVisibility(View.GONE);
                 //noinspection ConstantConditions
-
                 switch (response.code()){
                     case 200:
-                        centralDB.addPassenger(passenger, uuid);
                         passengerName.setText("");
                         passengerPhone.setText("");
                         passengerAddress.setText("");
@@ -266,8 +252,9 @@ public class RegisterPassenger extends AppCompatActivity{
                         counter += 1;
                         if (counter <= capacity){
                             currentSeat.setText(String.valueOf(counter));
+                            total += 1;
                             if (counter == capacity){
-                                currentItem.setVisible(false);
+                                nextItem.setVisible(false);
                             }
                         }
                         seatNumberArray.add(((SeatNumberAdapter)seatNumbers.getAdapter()).getSelectedSeat());
@@ -323,9 +310,10 @@ public class RegisterPassenger extends AppCompatActivity{
     }
 
     @SuppressWarnings("deprecation")
-    private void deletePassenger(final View view){
+    private void deleteTrip(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
-        auth.deletePassenger(uuid).enqueue(new Callback<Void>() {
+        auth.deleteTrip(SessionUtils.getCurrentTripId(),
+                "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 loadingLayout.setVisibility(View.GONE);
@@ -338,7 +326,7 @@ public class RegisterPassenger extends AppCompatActivity{
                                 .setAction("Retry", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        deletePassenger(view);
+                                        deleteTrip(view);
                                     }
                                 }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 }
@@ -352,7 +340,7 @@ public class RegisterPassenger extends AppCompatActivity{
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    deletePassenger(view);
+                                    deleteTrip(view);
                                 }
                             }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 } else {
@@ -360,97 +348,7 @@ public class RegisterPassenger extends AppCompatActivity{
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    deletePassenger(view);
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                }
-            }
-        });
-    }
-
-    private void addTrip(final View view){
-        auth.addTrip(trip.getDateAndTime(), trip.getDisplacement(), trip.getDeparture(),
-                trip.getCalendarDate(), trip.getCalendarMonth(), trip.getCalendarYear(),
-                uuid, currentSeat.getText().toString(), "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                switch (response.code()){
-                    case 200:
-                        addDriver(view);
-                        break;
-                    default:
-                        loadingLayout.setVisibility(View.GONE);
-                        Snackbar.make(view, "Couldn't add trip to database. ", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        deletePassenger(view);
-                                    }
-                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                loadingLayout.setVisibility(View.GONE);
-                if (NetworkUtils.isPhoneConnected(RegisterPassenger.this)){
-                    Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    deletePassenger(view);
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                } else {
-                    Snackbar.make(view, "Trip information upload: Unknown error. ", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    deletePassenger(view);
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                }
-            }
-        });
-    }
-
-    private void addDriver(final View view){
-        auth.sendDriver(driver.getDriverName(), driver.getDriverPhone(), uuid,
-                "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                switch (response.code()){
-                    case 200:
-                        break;
-                    default:
-                        loadingLayout.setVisibility(View.GONE);
-                        Snackbar.make(view, "Couldn't upload driver information. ", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        deletePassenger(view);
-                                    }
-                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                loadingLayout.setVisibility(View.GONE);
-                if (NetworkUtils.isPhoneConnected(RegisterPassenger.this)){
-                    Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    deletePassenger(view);
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                } else {
-                    Snackbar.make(view, "Driver information upload: Unknown error. ", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    deletePassenger(view);
+                                    deleteTrip(view);
                                 }
                             }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 }

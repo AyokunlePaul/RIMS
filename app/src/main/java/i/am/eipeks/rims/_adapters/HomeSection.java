@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims._classes.MiniTripInfo;
+import i.am.eipeks.rims._classes._model_class.MiniTripInfo;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 

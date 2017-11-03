@@ -4,11 +4,10 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims._classes.SubTrip;
+import i.am.eipeks.rims._classes._model_class.SubTrip;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 

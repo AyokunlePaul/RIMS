@@ -5,9 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
-import i.am.eipeks.rims._classes.Vehicle;
+import i.am.eipeks.rims._classes._model_class.Vehicle;
 
 
 public class VehicleDatabaseHelper extends SQLiteOpenHelper {

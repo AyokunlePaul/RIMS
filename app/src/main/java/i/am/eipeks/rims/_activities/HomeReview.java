@@ -13,11 +13,11 @@ import i.am.eipeks.rims._adapters.HomeSection;
 import i.am.eipeks.rims._adapters.PassengerInformationSection;
 import i.am.eipeks.rims._adapters.TripInformationSection;
 import i.am.eipeks.rims._adapters.VehicleInformationSection;
-import i.am.eipeks.rims._classes.Driver;
-import i.am.eipeks.rims._classes.Passenger;
-import i.am.eipeks.rims._classes.SubTrip;
-import i.am.eipeks.rims._classes.Trip;
-import i.am.eipeks.rims._classes.Vehicle;
+import i.am.eipeks.rims._classes._model_class.Driver;
+import i.am.eipeks.rims._classes._model_class.Passenger;
+import i.am.eipeks.rims._classes._model_class.SubTrip;
+import i.am.eipeks.rims._classes._model_class.Trip;
+import i.am.eipeks.rims._classes._model_class.Vehicle;
 import i.am.eipeks.rims._database.CentralDBHelper;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 

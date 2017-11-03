@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/app_bar_login_page"
-        android:background="@color/background_color">
+        android:background="@color/background_color"
+        android:gravity="center">
 
         <ImageView
             android:layout_width="70dp"
@@ -49,7 +50,9 @@
                 android:inputType="number"
                 android:hint="@string/identification_number"
                 android:id="@+id/identification_number"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -57,6 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="200dp"
+            android:layout_marginTop="20dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/identification_number_input_layout"
             android:textColorHint="@android:color/white"
@@ -69,7 +73,9 @@
                 android:inputType="textPassword"
                 android:hint="@string/password"
                 android:id="@+id/password"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"/>
 
         </android.support.design.widget.TextInputLayout>
 

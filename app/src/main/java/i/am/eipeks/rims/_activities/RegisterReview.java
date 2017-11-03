@@ -1,8 +1,6 @@
 package i.am.eipeks.rims._activities;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -11,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import i.am.eipeks.rims.Constants;
@@ -27,11 +27,13 @@ import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._adapters.PassengerInformationSection;
 import i.am.eipeks.rims._adapters.TripInformationSection;
 import i.am.eipeks.rims._adapters.VehicleInformationSection;
-import i.am.eipeks.rims._classes.Driver;
-import i.am.eipeks.rims._classes.Passenger;
-import i.am.eipeks.rims._classes.SubTrip;
-import i.am.eipeks.rims._classes.Trip;
-import i.am.eipeks.rims._classes.Vehicle;
+import i.am.eipeks.rims._classes._auth_class._auth_pojo.AuthPassenger;
+import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseTrip;
+import i.am.eipeks.rims._classes._model_class.Driver;
+import i.am.eipeks.rims._classes._model_class.Passenger;
+import i.am.eipeks.rims._classes._model_class.SubTrip;
+import i.am.eipeks.rims._classes._model_class.Trip;
+import i.am.eipeks.rims._classes._model_class.Vehicle;
 import i.am.eipeks.rims._database.CentralDBHelper;
 import i.am.eipeks.rims._network.Auth;
 import i.am.eipeks.rims._utils.APIUtils;
@@ -43,24 +45,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterReview extends AppCompatActivity{
-
-    private CentralDBHelper centralDB;
-
-    private String uuid, registrationNumber, totalNumberOfPassengers, vehicleInformation, tripInformation, driverInformation;
-
-    private ArrayList<Passenger> passengers;
-
     private Auth auth;
-
-    private SectionedRecyclerViewAdapter passengerAdapter, vehicleAdapter, tripAdapter;
-
-    private RecyclerView vehicleRecycleView, passengersRecycleView, tripRecycleView;
 
     private RelativeLayout loadingLayout;
 
-    private Vehicle vehicle;
-    private Trip trip;
-    private Driver driver;
+    private List<Passenger> passengers = new ArrayList<>();
+
+    private boolean backPressedOnce = false;
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -76,22 +67,19 @@ public class RegisterReview extends AppCompatActivity{
         getSupportActionBar().setTitle("RegisterReview Trip");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        vehicleInformation = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
-        tripInformation = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-        driverInformation = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
-        uuid = getIntent().getStringExtra(RegisterPassenger.INTENT_UUID);
-        totalNumberOfPassengers = getIntent().getStringExtra(RegisterPassenger.INTENT_TOTAL_NUMBER_OF_PASSENGERS);
-        registrationNumber = getIntent().getStringExtra(RegisterPassenger.INTENT_REGISTRATION_NUMBER);
+        Vehicle vehicle = new Vehicle(getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY));
+        Trip trip = new Trip(getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY));
+        Driver driver = new Driver(getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY));
 
-        vehicleRecycleView = (RecyclerView) findViewById(R.id.vehicle_information_recycler_view);
-        tripRecycleView = (RecyclerView) findViewById(R.id.trip_information_recycler_view);
-        passengersRecycleView = (RecyclerView) findViewById(R.id.passengers_information_recycler_view);
+        getTrip();
 
-        passengerAdapter = new SectionedRecyclerViewAdapter();
-        vehicleAdapter = new SectionedRecyclerViewAdapter();
-        tripAdapter = new SectionedRecyclerViewAdapter();
+        RecyclerView vehicleRecycleView = (RecyclerView) findViewById(R.id.vehicle_information_recycler_view);
+        RecyclerView tripRecycleView = (RecyclerView) findViewById(R.id.trip_information_recycler_view);
+        RecyclerView passengersRecycleView = (RecyclerView) findViewById(R.id.passengers_information_recycler_view);
 
-        centralDB = new CentralDBHelper(this);
+        SectionedRecyclerViewAdapter passengerAdapter = new SectionedRecyclerViewAdapter();
+        SectionedRecyclerViewAdapter vehicleAdapter = new SectionedRecyclerViewAdapter();
+        SectionedRecyclerViewAdapter tripAdapter = new SectionedRecyclerViewAdapter();
 
         vehicleRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
         tripRecycleView.setLayoutManager(new LinearLayoutManager(RegisterReview.this));
@@ -107,6 +95,65 @@ public class RegisterReview extends AppCompatActivity{
         tripRecycleView.setAdapter(tripAdapter);
     }
 
+    @SuppressWarnings("ConstantConditions")
+    private void getTrip(){
+        loadingLayout.setVisibility(View.VISIBLE);
+        auth.getTrip(SessionUtils.getCurrentTripId(),
+                "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseTrip>() {
+            @Override
+            public void onResponse(@NonNull Call<JSONResponseTrip> call, @NonNull Response<JSONResponseTrip> response) {
+                loadingLayout.setVisibility(View.GONE);
+                switch (response.code()){
+                    case 200:
+                        for (AuthPassenger passenger: response.body().getTrip().getPassengers()){
+                            passengers.add(passenger.getPassenger());
+                        }
+                        break;
+                    default:
+                        if (response.body().getMessage() != null){
+                            Snackbar.make(loadingLayout, response.body().getMessage(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            getTrip();
+                                        }
+                                    }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        } else {
+                            Snackbar.make(loadingLayout, response.message(), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            getTrip();
+                                        }
+                                    }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JSONResponseTrip> call, @NonNull Throwable t) {
+                loadingLayout.setVisibility(View.GONE);
+                if (NetworkUtils.isPhoneConnected(RegisterReview.this)){
+                    Snackbar.make(loadingLayout, "Phone not connected.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getTrip();
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                } else {
+                    Snackbar.make(loadingLayout, "Unknown error.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getTrip();
+                                }
+                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                }
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -116,7 +163,6 @@ public class RegisterReview extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()){
             case R.id.delete:
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
@@ -146,62 +192,61 @@ public class RegisterReview extends AppCompatActivity{
                 return true;
 
             case R.id.send:
-                if (!(Integer.valueOf(totalNumberOfPassengers) > 0)){
-                    Toast.makeText(this, "Enter at least one passenger", Toast.LENGTH_SHORT).show();
-                } else {
-                    new AlertDialog.Builder(this)
-                            .setMessage(String.format(Locale.ENGLISH, "%s", "Are you sure you wanna add trip?"))
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            }).setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-//                                        new AsyncTask<Void, Void, Void>() {
-//                                            @Override
-//                                            protected void onPreExecute() {
-//
-//                                            }
-//
-//                                            @Override
-//                                            protected Void doInBackground(Void... voids) {
-//                                                centralDB.addTrip(trip, uuid);
-//                                                centralDB.addVehicle(vehicle, uuid);
-//                                                centralDB.addDriver(driver, uuid);
-//                                                centralDB.modifyTrip(totalNumberOfPassengers, uuid);
-//                                                return null;
-//                                            }
-//
-//                                            @Override
-//                                            protected void onPostExecute(Void aVoid) {
-//                                                Toast.makeText(RegisterReview.this, "Done", Toast.LENGTH_SHORT).show();
-//                                                startActivity(new Intent(RegisterReview.this, Main.class));
-//                                            }
-//                                        }.execute();
-                                    }
-                            }).create().show();
-                }
+                new AlertDialog.Builder(this)
+                        .setMessage(String.format(Locale.ENGLISH, "%s", "Are you sure you wanna add trip?"))
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                makeToast("Trip added.");
+                            }
+                        }).create().show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (!backPressedOnce){
+            backPressedOnce = true;
+            new AlertDialog.Builder(this)
+                    .setTitle("Cancel trip")
+                    .setMessage("All trip information would be lost")
+                    .setPositiveButton("Cancel trip", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteTrip(loadingLayout);
+                        }
+                    })
+                    .setNegativeButton("Mistake, Go back", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            backPressedOnce = false;
+                        }
+                    }).create().show();
+        }
+    }
+
     private void deleteTrip(final View view){
-        auth.deleteTrip(uuid, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
+        auth.deleteTrip(SessionUtils.getCurrentTripId(),"Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 switch (response.code()){
                     case 200:
-                        deleteDriver(view);
                         break;
                     default:
-                        Snackbar.make(view, "Couldn't add trip to database. ", Snackbar.LENGTH_INDEFINITE)
+                        Snackbar.make(view, "Couldn't cancel trip. ", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Retry", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
+                                        deleteTrip(view);
                                     }
                                 }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 }
@@ -214,7 +259,7 @@ public class RegisterReview extends AppCompatActivity{
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    deleteTrip(view);
                                 }
                             }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 } else {
@@ -222,7 +267,7 @@ public class RegisterReview extends AppCompatActivity{
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    deleteTrip(view);
                                 }
                             }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 }
@@ -230,45 +275,10 @@ public class RegisterReview extends AppCompatActivity{
         });
     }
 
-    private void deleteDriver(final View view){
-        auth.deleteDriver(uuid, "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                switch (response.code()){
-                    case 200:
-                        break;
-                    default:
-                        Snackbar.make(view, "Couldn't add trip to database. ", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                    }
-                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                if (NetworkUtils.isPhoneConnected(RegisterReview.this)){
-                    Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                } else {
-                    Snackbar.make(view, "Trip deletion: Unknown error. ", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                }
-                            }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
-                }
-            }
-        });
+    @SuppressWarnings("SameParameterValue")
+    private void makeToast(String message){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
-
 }

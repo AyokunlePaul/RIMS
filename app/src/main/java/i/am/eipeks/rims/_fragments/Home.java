@@ -18,7 +18,7 @@ import java.util.*;
 
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._activities.HomeReview;
-import i.am.eipeks.rims._classes.MiniTripInfo;
+import i.am.eipeks.rims._classes._model_class.MiniTripInfo;
 import i.am.eipeks.rims._adapters.HomeSection;
 import i.am.eipeks.rims._database.CentralDBHelper;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;

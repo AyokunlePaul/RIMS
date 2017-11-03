@@ -1,10 +1,12 @@
-package i.am.eipeks.rims._classes._auth_class;
+package i.am.eipeks.rims._classes._auth_class._auth_pojo;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import i.am.eipeks.rims._classes._model_class.Vehicle;
 
 public class AuthVehicle {
 
@@ -128,5 +130,9 @@ public class AuthVehicle {
 
     public void setTrips(List<AuthTrip> trips) {
         this.trips = trips;
+    }
+
+    public Vehicle getVehicle(){
+        return new Vehicle(vehicleName, vehicleMake, String.valueOf(vehicleCapacity), vehicleWeight, vehicleEngine, vehicleRtSss, vehicleRegistrationNumber);
     }
 }

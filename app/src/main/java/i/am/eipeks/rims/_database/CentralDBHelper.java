@@ -10,12 +10,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-import i.am.eipeks.rims._classes.Driver;
-import i.am.eipeks.rims._classes.MiniTripInfo;
-import i.am.eipeks.rims._classes.Passenger;
-import i.am.eipeks.rims._classes.SubTrip;
-import i.am.eipeks.rims._classes.Trip;
-import i.am.eipeks.rims._classes.Vehicle;
+import i.am.eipeks.rims._classes._model_class.Driver;
+import i.am.eipeks.rims._classes._model_class.MiniTripInfo;
+import i.am.eipeks.rims._classes._model_class.Passenger;
+import i.am.eipeks.rims._classes._model_class.SubTrip;
+import i.am.eipeks.rims._classes._model_class.Trip;
+import i.am.eipeks.rims._classes._model_class.Vehicle;
 
 
 public class CentralDBHelper extends SQLiteOpenHelper {

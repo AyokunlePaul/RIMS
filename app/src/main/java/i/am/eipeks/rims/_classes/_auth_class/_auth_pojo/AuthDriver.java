@@ -1,10 +1,10 @@
-package i.am.eipeks.rims._classes._auth_class;
+package i.am.eipeks.rims._classes._auth_class._auth_pojo;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AuthPassenger {
+public class AuthDriver {
 
     @Expose
     @SerializedName("id")
@@ -21,26 +21,6 @@ public class AuthPassenger {
     @Expose
     @SerializedName("phone")
     private String phone;
-
-    @Expose
-    @SerializedName("sex")
-    private String sex;
-
-    @Expose
-    @SerializedName("address")
-    private String address;
-
-    @Expose
-    @SerializedName("next_of_kin")
-    private String nextOfKin;
-
-    @Expose
-    @SerializedName("next_of_kin_phone")
-    private String nextOfKinPhone;
-
-    @Expose
-    @SerializedName("seat")
-    private Integer seat;
 
     @Expose
     @SerializedName("created_at")

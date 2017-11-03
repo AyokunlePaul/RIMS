@@ -66,6 +66,16 @@ public class SessionUtils {
         editor.commit();
     }
 
+    public static void setCurrentVehicleId(int currentVehicleId){
+        editor.putInt(Constants.CURRENT_VEHICLE_ID, currentVehicleId);
+        editor.commit();
+    }
+
+    public static void setCurrentTripId(int currentTripId){
+        editor.putInt(Constants.CURRENT_VEHICLE_ID, currentTripId);
+        editor.commit();
+    }
+
     public static boolean hasAppRunOnce(){ return sharedPreferences.getBoolean(Constants.HAS_RUN_BEFORE, false); }
 
     public static String getAppToken(){ return sharedPreferences.getString(Constants.APP_TOKEN, null); }
@@ -85,4 +95,12 @@ public class SessionUtils {
     public static int getMonthLoggedIn(){ return sharedPreferences.getInt(Constants.MONTH_LOGGED_IN, 0); }
 
     public static int getYearLoggedIn(){ return sharedPreferences.getInt(Constants.YEAR_LOGGED_IN, 0); }
+
+    public static int getCurrentVehicleId(){
+        return sharedPreferences.getInt(Constants.CURRENT_VEHICLE_ID, 0);
+    }
+
+    public static int getCurrentTripId(){
+        return sharedPreferences.getInt(Constants.CURRENT_TRIP_ID, 0);
+    }
 }

@@ -7,7 +7,7 @@
         android:id="@+id/done_menu"
         app:showAsAction="ifRoom"
         android:orderInCategory="2"
-        android:visible="true"/>
+        android:enabled="false"/>
 
     <item
         android:title="@string/next"

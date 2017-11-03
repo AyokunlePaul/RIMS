@@ -1,4 +1,4 @@
-package i.am.eipeks.rims._classes;
+package i.am.eipeks.rims._classes._model_class;
 
 
 

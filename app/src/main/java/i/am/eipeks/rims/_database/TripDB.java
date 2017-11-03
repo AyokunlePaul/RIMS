@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
-import i.am.eipeks.rims._classes.TripTemporary;
+import i.am.eipeks.rims._classes._model_class.TripTemporary;
 
 
 public class TripDB extends SQLiteOpenHelper {

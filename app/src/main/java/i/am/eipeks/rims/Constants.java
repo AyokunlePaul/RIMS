@@ -5,10 +5,8 @@ package i.am.eipeks.rims;
 public interface Constants {
 
     int HOME_ACTIVITY = 1001;
-    int REGISTER_PASSENGER_ACTIVITY = 1002;
-    String CALLING_ACTIVITY = "callingActivity";
 
-    String INTENT_UUID_JOURNEY = "UUID";
+    String CALLING_ACTIVITY = "callingActivity";
     String INTENT_CAPACITY_JOURNEY = "Capacity";
     String INTENT_REGISTRATION_NUMBER_JOURNEY = "registrationNumberJourney";
     String INTENT_TRIP_INFORMATION_JOURNEY = "trip";
@@ -25,4 +23,6 @@ public interface Constants {
     String MONTH_LOGGED_IN = "month";
     String DATE_LOGGED_IN = "date";
     String MINUTE_LOGGED_IN = "minute";
+    String CURRENT_VEHICLE_ID = "currentVehicle";
+    String CURRENT_TRIP_ID = "currentTripId";
 }

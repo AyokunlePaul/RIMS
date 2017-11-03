@@ -1,10 +1,10 @@
-package i.am.eipeks.rims._classes._auth_class;
+package i.am.eipeks.rims._classes._auth_class._json_response;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class JSONResponseTrip {
+public class JSONResponsePassenger {
 
     @Expose
     @SerializedName("status")
@@ -13,10 +13,6 @@ public class JSONResponseTrip {
     @Expose
     @SerializedName("message")
     private String message;
-
-    @Expose
-    @SerializedName("trip")
-    private AuthTrip trip;
 
     public Integer getStatus() {
         return status;
@@ -32,13 +28,5 @@ public class JSONResponseTrip {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public AuthTrip getTrip() {
-        return trip;
-    }
-
-    public void setTrip(AuthTrip trip) {
-        this.trip = trip;
     }
 }
