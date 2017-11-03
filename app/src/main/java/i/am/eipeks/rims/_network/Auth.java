@@ -5,6 +5,7 @@ import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponsePassenge
 import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseTrip;
 import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseUser;
 import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseVehicle;
+import i.am.eipeks.rims._classes._auth_class._json_response._register.JSONResponseTripRegister;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -46,8 +47,8 @@ public interface Auth {
 
     @Multipart
     @POST("trip")
-    Call<JSONResponseTrip> addTrip(@Part("date_and_time") String dateAndTime, @Part("displacement") String displacement,
-                                   @Header("Authorization") String header, @Part("vehicle_id") Integer vehicleId);
+    Call<JSONResponseTripRegister> addTrip(@Part("departure_time") String dateAndTime, @Part("displacement") String displacement,
+                                           @Header("Authorization") String header, @Part("vehicle_id") Integer vehicleId);
 
     @DELETE("trip/{trip_id}")
     Call<Void> deleteTrip(@Path("trip_id") Integer tripId, @Header("Authorization") String authorization);

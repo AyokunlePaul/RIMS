@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +21,19 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
-import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseTrip;
-import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._activities.RegisterPassenger;
+import i.am.eipeks.rims._classes._auth_class._json_response._register.JSONResponseTripRegister;
+import i.am.eipeks.rims._utils.APIUtils;
 import i.am.eipeks.rims._classes._auth_class._auth_pojo.AuthVehicle;
 import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponseVehicle;
 import i.am.eipeks.rims._network.Auth;
@@ -157,7 +159,7 @@ public class Journey extends Fragment implements
                 if (response.isSuccessful() && response.body().getStatus() == 200){
                     loadingLayout.setVisibility(View.GONE);
                     authVehicle = response.body().getAuthVehicle();
-                    SessionUtils.setCurrentTripId(authVehicle.getId());
+                    SessionUtils.setCurrentVehicleId(authVehicle.getId());
                     dialog.show();
                     continueToLoad.setEnabled(true);
                     continueToLoad.setClickable(true);
@@ -286,7 +288,6 @@ public class Journey extends Fragment implements
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
                             dialog.dismiss();
                             registerTrip(view);
                         }
@@ -300,25 +301,31 @@ public class Journey extends Fragment implements
     @SuppressWarnings("ConstantConditions")
     private void registerTrip(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
+        makeToast("registerTrip");
         auth.addTrip(getCurrentDateTime(), displacement, "Bearer " + SessionUtils.getAppToken(),
-                SessionUtils.getCurrentVehicleId()).enqueue(new Callback<JSONResponseTrip>() {
+                SessionUtils.getCurrentVehicleId()).enqueue(new Callback<JSONResponseTripRegister>() {
             @Override
-            public void onResponse(@NonNull Call<JSONResponseTrip> call, @NonNull Response<JSONResponseTrip> response) {
+            public void onResponse(@NonNull Call<JSONResponseTripRegister> call, @NonNull Response<JSONResponseTripRegister> response) {
+                loadingLayout.setVisibility(View.GONE);
+                makeToast(String.valueOf(response.message()));
                 switch (response.code()){
                     case 200:
-                        SessionUtils.setCurrentTripId(response.body().getTrip().getTripId());
                         addDriver(view);
                         break;
                     case 400:
-                        loadingLayout.setVisibility(View.GONE);
-                        if (response.body().getMessage() != null){
-                            Snackbar.make(view, response.body().getMessage(), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Retry", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            registerTrip(view);
-                                        }
-                                    }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+//                        loadingLayout.setVisibility(View.GONE);
+                        if (response.body() != null){
+                            if (response.body().getMessage() != null){
+                                Snackbar.make(view, response.body().getMessage(), Snackbar.LENGTH_INDEFINITE)
+                                        .setAction("Retry", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                registerTrip(view);
+                                            }
+                                        }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
+                            } else {
+                                makeToast("Message is null");
+                            }
                         } else {
                             Snackbar.make(view, response.message(), Snackbar.LENGTH_INDEFINITE)
                                     .setAction("Retry", new View.OnClickListener() {
@@ -328,6 +335,15 @@ public class Journey extends Fragment implements
                                         }
                                     }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                         }
+                        break;
+                    case 500:
+                        Snackbar.make(view, "Internal server error.", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        registerTrip(view);
+                                    }
+                                }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                         break;
                     default:
                         Snackbar.make(view, "Unexpected error occurred.", Snackbar.LENGTH_INDEFINITE)
@@ -342,7 +358,7 @@ public class Journey extends Fragment implements
             }
 
             @Override
-            public void onFailure(@NonNull Call<JSONResponseTrip> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<JSONResponseTripRegister> call, @NonNull Throwable t) {
                 loadingLayout.setVisibility(View.GONE);
                 if (NetworkUtils.isPhoneConnected(getActivity())){
                     Snackbar.make(view, "Phone not connected.", Snackbar.LENGTH_INDEFINITE)
@@ -369,6 +385,7 @@ public class Journey extends Fragment implements
         if (!(loadingLayout.getVisibility() == View.VISIBLE)){
             loadingLayout.setVisibility(View.VISIBLE);
         }
+        makeToast("addDriver");
         auth.sendDriver(driver_sName.getText().toString(), driver_sPhone.getText().toString(),
                 "Bearer " + SessionUtils.getAppToken(),
                 SessionUtils.getCurrentTripId()).enqueue(new Callback<Void>() {
@@ -420,8 +437,14 @@ public class Journey extends Fragment implements
         });
     }
 
-    private String getCurrentDateTime(){
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
+    private void makeToast(String message){
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private String getCurrentDateTime(){
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Timestamp(new Date().getTime()));
+    }
 }
