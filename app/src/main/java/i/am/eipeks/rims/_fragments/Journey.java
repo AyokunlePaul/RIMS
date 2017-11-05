@@ -310,7 +310,7 @@ public class Journey extends Fragment implements
                 makeToast(String.valueOf(response.message()));
                 switch (response.code()){
                     case 200:
-                        addDriver(view);
+                        makeToast(String.valueOf(response.message()));
                         break;
                     case 400:
 //                        loadingLayout.setVisibility(View.GONE);
