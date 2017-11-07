@@ -263,7 +263,8 @@ public class Journey extends Fragment implements
 
             vehicleNumberString = vehicleNumber.getText().toString();
 
-            getVehicle(view, vehicleNumberString);
+//            getVehicle(view, vehicleNumberString);
+            registerTrip(view);
 
             loadingLayout.setVisibility(View.VISIBLE);
 
@@ -289,7 +290,7 @@ public class Journey extends Fragment implements
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
-                            registerTrip(view);
+//                            sendTripToServer(view);
                         }
                     });
                 }
@@ -301,19 +302,20 @@ public class Journey extends Fragment implements
     @SuppressWarnings("ConstantConditions")
     private void registerTrip(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
-        makeToast("registerTrip");
+//        makeToast("registerTrip");
         auth.addTrip(getCurrentDateTime(), displacement, "Bearer " + SessionUtils.getAppToken(),
-                SessionUtils.getCurrentVehicleId()).enqueue(new Callback<JSONResponseTripRegister>() {
+                21, "application/json").enqueue(new Callback<JSONResponseTripRegister>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseTripRegister> call, @NonNull Response<JSONResponseTripRegister> response) {
                 loadingLayout.setVisibility(View.GONE);
-                makeToast(String.valueOf(response.message()));
+                makeToast(String.valueOf(response.code()));
                 switch (response.code()){
                     case 200:
                         makeToast(String.valueOf(response.message()));
                         break;
                     case 400:
 //                        loadingLayout.setVisibility(View.GONE);
+                        makeToast(String.valueOf(response.code()));
                         if (response.body() != null){
                             if (response.body().getMessage() != null){
                                 Snackbar.make(view, response.body().getMessage(), Snackbar.LENGTH_INDEFINITE)
@@ -380,6 +382,25 @@ public class Journey extends Fragment implements
             }
         });
     }
+
+//    private void sendTripToServer(final View view){
+//        loadingLayout.setVisibility(View.VISIBLE);
+//        auth.addTrip(getCurrentDateTime(), displacement,
+//                "Bearer " + SessionUtils.getAppToken(), 21)
+//                .enqueue(new Callback<JSONResponseTripRegister>() {
+//                    @Override
+//                    public void onResponse(@NonNull Call<JSONResponseTripRegister> call, @NonNull Response<JSONResponseTripRegister> response) {
+//                        loadingLayout.setVisibility(View.GONE);
+//                        makeToast(response.message());
+//                    }
+//
+//                    @Override
+//                    public void onFailure(@NonNull Call<JSONResponseTripRegister> call, @NonNull Throwable t) {
+//                        loadingLayout.setVisibility(View.GONE);
+//                        makeToast("onFailure");
+//                    }
+//                });
+//    }
 
     private void addDriver(final View view){
         if (!(loadingLayout.getVisibility() == View.VISIBLE)){

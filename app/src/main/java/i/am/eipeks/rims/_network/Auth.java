@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -48,7 +49,8 @@ public interface Auth {
     @Multipart
     @POST("trip")
     Call<JSONResponseTripRegister> addTrip(@Part("departure_time") String dateAndTime, @Part("displacement") String displacement,
-                                           @Header("Authorization") String header, @Part("vehicle_id") Integer vehicleId);
+                                           @Header("Authorization") String header, @Part("vehicle_id") Integer vehicleId,
+                                           @Header("Content-Type") String contentType);
 
     @DELETE("trip/{trip_id}")
     Call<Void> deleteTrip(@Path("trip_id") Integer tripId, @Header("Authorization") String authorization);
