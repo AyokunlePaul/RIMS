@@ -22,16 +22,16 @@ import retrofit2.http.Query;
 
 public interface Auth {
 
-    @FormUrlEncoded
+    @Multipart
     @POST("passenger")
-    Call<Void> sendPassenger(@Field("name") String passengerName, @Field("phone") String passengerPhone,
-                             @Field("sex") String passengerSex, @Field("address") String passengerAddress,
-                             @Field("next_of_kin") String passengerNextOfKin, @Field("seat") Integer passengerSeat,
-                             @Field("next_of_kin_phone") String nextOfKinPhone, @Field("trip_id") Integer tripId,
+    Call<JSONResponsePassenger> sendPassenger(@Part("name") String passengerName, @Part("phone") String passengerPhone,
+                             @Part("sex") String passengerSex, @Part("address") String passengerAddress,
+                             @Part("next_of_kin") String passengerNextOfKin, @Part("seat") Integer passengerSeat,
+                             @Part("next_of_kin_phone") String nextOfKinPhone, @Part("trip_id") Integer tripId,
                              @Header("Authorization") String authorization);
 
     @GET("passenger/{uuid}")
-    Call<JSONResponsePassenger> getPassenger(@Path("uuid") String uuid);
+    Call<Void> getPassenger(@Path("uuid") String uuid);
 
     @DELETE("passenger/{uuid}")
     Call<Void> deletePassenger(@Path("uuid") String uuid);

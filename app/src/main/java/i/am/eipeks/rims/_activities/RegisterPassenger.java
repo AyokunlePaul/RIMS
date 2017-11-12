@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
 import i.am.eipeks.rims._adapters.SeatNumberAdapter;
+import i.am.eipeks.rims._classes._auth_class._json_response.JSONResponsePassenger;
 import i.am.eipeks.rims._classes._model_class.Passenger;
 import i.am.eipeks.rims._network.Auth;
 import i.am.eipeks.rims._utils.APIUtils;
@@ -237,9 +238,9 @@ public class RegisterPassenger extends AppCompatActivity{
         auth.sendPassenger(passenger.getPassengerName(), passenger.getPassengerPhone(),
                 passenger.getPassengerSex(), passenger.getPassengerAddress(), passenger.getNextOfKin(),
                 Integer.valueOf(passenger.getSeatNumber()), passenger.getNextOfKinPhone(),
-                SessionUtils.getCurrentTripId(),"Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<Void>() {
+                SessionUtils.getCurrentTripId(),"Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponsePassenger>() {
             @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+            public void onResponse(@NonNull Call<JSONResponsePassenger> call, @NonNull Response<JSONResponsePassenger> response) {
                 loadingLayout.setVisibility(View.GONE);
                 //noinspection ConstantConditions
                 switch (response.code()){
@@ -263,6 +264,7 @@ public class RegisterPassenger extends AppCompatActivity{
                         break;
                     case 400:
                         //noinspection ConstantConditions
+                        makeToast(String.valueOf(response.body() == null));
                         Snackbar.make(view, response.message(), Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Resend", new View.OnClickListener() {
                                     @Override
@@ -286,7 +288,7 @@ public class RegisterPassenger extends AppCompatActivity{
             }
 
             @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<JSONResponsePassenger> call, @NonNull Throwable t) {
                 loadingLayout.setVisibility(View.GONE);
                 if (NetworkUtils.isPhoneConnected(RegisterPassenger.this)){
                     Snackbar.make(view, "Phone not connected.", Snackbar.LENGTH_INDEFINITE)
