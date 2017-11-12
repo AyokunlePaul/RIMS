@@ -153,6 +153,8 @@ public class Journey extends Fragment implements
 
     @SuppressWarnings("ConstantConditions")
     private void getVehicle(final View view, final String vehicleId){
+        continueToLoad.setEnabled(false);
+        continueToLoad.setClickable(false);
         auth.getVehicle(Integer.valueOf(vehicleId), "Bearer " + SessionUtils.getAppToken()).enqueue(new Callback<JSONResponseVehicle>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseVehicle> call, @NonNull Response<JSONResponseVehicle> response) {
@@ -161,9 +163,9 @@ public class Journey extends Fragment implements
                     authVehicle = response.body().getAuthVehicle();
                     SessionUtils.setCurrentVehicleId(authVehicle.getId());
                     dialog.show();
+                } else {
                     continueToLoad.setEnabled(true);
                     continueToLoad.setClickable(true);
-                } else {
                     loadingLayout.setVisibility(View.GONE);
                     switch (response.code()){
                         case 404:
@@ -188,6 +190,8 @@ public class Journey extends Fragment implements
 
             @Override
             public void onFailure(@NonNull Call<JSONResponseVehicle> call, @NonNull Throwable t) {
+                continueToLoad.setEnabled(true);
+                continueToLoad.setClickable(true);
                 //noinspection deprecation
                 Snackbar.make(view, "Network error.", Snackbar.LENGTH_INDEFINITE)
                         .setAction("Retry", new View.OnClickListener() {
@@ -204,9 +208,6 @@ public class Journey extends Fragment implements
 
     public void getVehicleInformation(final View view){
         final String vehicleNumberString;
-
-        continueToLoad.setEnabled(false);
-        continueToLoad.setClickable(false);
 
         String dateAndTime = DateFormat.getDateTimeInstance().format(new Date());
         String calendarDate = Integer.toString(Calendar.getInstance().get(Calendar.DATE));
@@ -256,6 +257,8 @@ public class Journey extends Fragment implements
             } else {
                 driver_sPhoneTextInputLayout.setError("Field is empty");
             }
+        } else if (!TextUtils.isDigitsOnly(vehicleNumber.getText())){
+            vehicleNumberTextInputLayout.setError("Invalid vehicle number type");
         } else {
             driverIntent = String.format("%s_%s", driver_sName.getText().toString().trim(), driver_sPhone.getText().toString().trim());
             tripIntent = String.format("%s_%s_%s_%s_%s_%s",
@@ -263,8 +266,7 @@ public class Journey extends Fragment implements
 
             vehicleNumberString = vehicleNumber.getText().toString();
 
-//            getVehicle(view, vehicleNumberString);
-            registerTrip(view);
+            getVehicle(view, vehicleNumberString);
 
             loadingLayout.setVisibility(View.VISIBLE);
 
@@ -288,9 +290,9 @@ public class Journey extends Fragment implements
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
+                        public void onClick(View v) {
                             dialog.dismiss();
-//                            sendTripToServer(view);
+                            registerTrip(view);
                         }
                     });
                 }
@@ -302,19 +304,19 @@ public class Journey extends Fragment implements
     @SuppressWarnings("ConstantConditions")
     private void registerTrip(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
-//        makeToast("registerTrip");
-        auth.addTrip(getCurrentDateTime(), displacement, "Bearer " + SessionUtils.getAppToken(),
-                21, "application/json").enqueue(new Callback<JSONResponseTripRegister>() {
+        auth.addTrip("Bearer " + SessionUtils.getAppToken(), Integer.valueOf(vehicleNumber.getText().toString()),
+                displacement, getCurrentDateTime()).enqueue(new Callback<JSONResponseTripRegister>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseTripRegister> call, @NonNull Response<JSONResponseTripRegister> response) {
                 loadingLayout.setVisibility(View.GONE);
-                makeToast(String.valueOf(response.code()));
                 switch (response.code()){
                     case 200:
-                        makeToast(String.valueOf(response.message()));
+                        makeToast("Trip registered");
+                        addDriver(view);
                         break;
                     case 400:
-//                        loadingLayout.setVisibility(View.GONE);
+                        continueToLoad.setEnabled(true);
+                        continueToLoad.setClickable(true);
                         makeToast(String.valueOf(response.code()));
                         if (response.body() != null){
                             if (response.body().getMessage() != null){
@@ -339,6 +341,8 @@ public class Journey extends Fragment implements
                         }
                         break;
                     case 500:
+                        continueToLoad.setEnabled(true);
+                        continueToLoad.setClickable(true);
                         Snackbar.make(view, "Internal server error.", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Retry", new View.OnClickListener() {
                                     @Override
@@ -348,6 +352,8 @@ public class Journey extends Fragment implements
                                 }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                         break;
                     default:
+                        continueToLoad.setEnabled(true);
+                        continueToLoad.setClickable(true);
                         Snackbar.make(view, "Unexpected error occurred.", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Retry", new View.OnClickListener() {
                                     @Override
@@ -362,6 +368,8 @@ public class Journey extends Fragment implements
             @Override
             public void onFailure(@NonNull Call<JSONResponseTripRegister> call, @NonNull Throwable t) {
                 loadingLayout.setVisibility(View.GONE);
+                continueToLoad.setEnabled(true);
+                continueToLoad.setClickable(true);
                 if (NetworkUtils.isPhoneConnected(getActivity())){
                     Snackbar.make(view, "Phone not connected.", Snackbar.LENGTH_INDEFINITE)
                             .setAction("Retry", new View.OnClickListener() {
@@ -383,30 +391,10 @@ public class Journey extends Fragment implements
         });
     }
 
-//    private void sendTripToServer(final View view){
-//        loadingLayout.setVisibility(View.VISIBLE);
-//        auth.addTrip(getCurrentDateTime(), displacement,
-//                "Bearer " + SessionUtils.getAppToken(), 21)
-//                .enqueue(new Callback<JSONResponseTripRegister>() {
-//                    @Override
-//                    public void onResponse(@NonNull Call<JSONResponseTripRegister> call, @NonNull Response<JSONResponseTripRegister> response) {
-//                        loadingLayout.setVisibility(View.GONE);
-//                        makeToast(response.message());
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NonNull Call<JSONResponseTripRegister> call, @NonNull Throwable t) {
-//                        loadingLayout.setVisibility(View.GONE);
-//                        makeToast("onFailure");
-//                    }
-//                });
-//    }
-
     private void addDriver(final View view){
         if (!(loadingLayout.getVisibility() == View.VISIBLE)){
             loadingLayout.setVisibility(View.VISIBLE);
         }
-        makeToast("addDriver");
         auth.sendDriver(driver_sName.getText().toString(), driver_sPhone.getText().toString(),
                 "Bearer " + SessionUtils.getAppToken(),
                 SessionUtils.getCurrentTripId()).enqueue(new Callback<Void>() {
@@ -415,6 +403,7 @@ public class Journey extends Fragment implements
                 loadingLayout.setVisibility(View.GONE);
                 switch (response.code()){
                     case 200:
+                        makeToast("Trip driver registered");
                         startActivity(new Intent(getContext(), RegisterPassenger.class)
                                 .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getVehicleCapacity())
                                 .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getVehicleRegistrationNumber())
@@ -424,6 +413,8 @@ public class Journey extends Fragment implements
                         getActivity().finish();
                         break;
                     default:
+                        continueToLoad.setEnabled(true);
+                        continueToLoad.setClickable(true);
                         Snackbar.make(view, "Couldn't upload driver information. ", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Retry", new View.OnClickListener() {
                                     @Override
@@ -437,12 +428,14 @@ public class Journey extends Fragment implements
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 loadingLayout.setVisibility(View.GONE);
+                continueToLoad.setEnabled(true);
+                continueToLoad.setClickable(true);
                 if (NetworkUtils.isPhoneConnected(getContext())){
                     Snackbar.make(view, "Phone is not connected. ", Snackbar.LENGTH_INDEFINITE)
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    addDriver(view);
                                 }
                             }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 } else {
@@ -450,7 +443,7 @@ public class Journey extends Fragment implements
                             .setAction("Retry", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    addDriver(view);
                                 }
                             }).setActionTextColor(getResources().getColor(R.color.colorPrimary)).show();
                 }
