@@ -72,7 +72,7 @@ public class SessionUtils {
     }
 
     public static void setCurrentTripId(int currentTripId){
-        editor.putInt(Constants.CURRENT_VEHICLE_ID, currentTripId);
+        editor.putInt(Constants.CURRENT_TRIP_ID, currentTripId);
         editor.commit();
     }
 

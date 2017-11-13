@@ -304,15 +304,17 @@ public class Journey extends Fragment implements
     @SuppressWarnings("ConstantConditions")
     private void registerTrip(final View view){
         loadingLayout.setVisibility(View.VISIBLE);
-        auth.addTrip("Bearer " + SessionUtils.getAppToken(), Integer.valueOf(vehicleNumber.getText().toString()),
+        auth.addTrip("Bearer " + SessionUtils.getAppToken(), SessionUtils.getCurrentVehicleId(),
                 displacement, getCurrentDateTime()).enqueue(new Callback<JSONResponseTripRegister>() {
             @Override
             public void onResponse(@NonNull Call<JSONResponseTripRegister> call, @NonNull Response<JSONResponseTripRegister> response) {
                 loadingLayout.setVisibility(View.GONE);
                 switch (response.code()){
                     case 200:
-                        makeToast("Trip registered");
+//                        makeToast("Trip registered");
+                        SessionUtils.setCurrentTripId(response.body().getTrip().getTripId());
                         addDriver(view);
+                        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
                         break;
                     case 400:
                         continueToLoad.setEnabled(true);

@@ -72,8 +72,7 @@ public class RegisterPassenger extends AppCompatActivity{
         vehicleIntent = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
         driverIntent = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
         tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-//        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
-        capacity = 5;
+        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
@@ -111,6 +110,8 @@ public class RegisterPassenger extends AppCompatActivity{
 
         currentSeat.setText(String.valueOf(counter));
         capacityTextView.setText(String.valueOf(capacity));
+
+        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
     }
 
     @Override
@@ -141,11 +142,6 @@ public class RegisterPassenger extends AppCompatActivity{
             default:
                 sex = null;
         }
-
-        if (total >= 1 && !doneItem.isEnabled()){
-            doneItem.setEnabled(true);
-        }
-
         switch (item.getItemId()){
             case R.id.done_menu:
                 new AlertDialog.Builder(this)
@@ -206,6 +202,9 @@ public class RegisterPassenger extends AppCompatActivity{
                 }
                 return true;
         }
+        if (total > 0 && !doneItem.isEnabled()){
+            doneItem.setEnabled(true);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -254,7 +253,7 @@ public class RegisterPassenger extends AppCompatActivity{
                         if (counter <= capacity){
                             currentSeat.setText(String.valueOf(counter));
                             total += 1;
-                            if (counter == capacity){
+                            if (total == capacity){
                                 nextItem.setVisible(false);
                             }
                         }

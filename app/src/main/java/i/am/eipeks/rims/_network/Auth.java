@@ -59,7 +59,7 @@ public interface Auth {
     Call<Void> deleteTrip(@Path("trip_id") Integer tripId, @Header("Authorization") String authorization);
 
     @GET("trip/{trip_id}")
-    Call<JSONResponseTrip> getTrip(@Path("trip") Integer tripId, @Header("Authorization") String authorization);
+    Call<JSONResponseTrip> getTrip(@Path("trip_id") Integer tripId, @Header("Authorization") String authorization);
 
     @Multipart
     @POST("driver")
