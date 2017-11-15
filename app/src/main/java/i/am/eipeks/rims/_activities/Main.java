@@ -47,10 +47,7 @@ public class Main extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        if (SessionUtils.isLoggedIn()){
-
-        } else {
-            SessionUtils.setLoggedIn(false);
+        if (!SessionUtils.isLoggedIn()){
             startActivity(new Intent(this, Login.class));
         }
 
@@ -93,9 +90,7 @@ public class Main extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         return toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-
     }
 
     @Override
