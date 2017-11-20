@@ -74,10 +74,6 @@ public class RegisterPassenger extends AppCompatActivity{
         tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
         capacity = getIntent().getIntExtra(Constants.INTENT_CAPACITY_JOURNEY, 0);
 
-        if (savedInstanceState != null){
-            seatNumberArray = savedInstanceState.getIntegerArrayList(Constants.SEAT_NUMBER_ARRAY);
-        }
-
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
@@ -115,7 +111,12 @@ public class RegisterPassenger extends AppCompatActivity{
         currentSeat.setText(String.valueOf(counter));
         capacityTextView.setText(String.valueOf(capacity));
 
-//        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
+        if (savedInstanceState != null){
+            seatNumberArray = savedInstanceState.getIntegerArrayList(Constants.SEAT_NUMBER_ARRAY);
+            currentSeat.setText(savedInstanceState.getString(Constants.COUNTER));
+            total = savedInstanceState.getInt(Constants.TOTAL);
+        }
+
     }
 
     @Override
@@ -364,6 +365,8 @@ public class RegisterPassenger extends AppCompatActivity{
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putIntegerArrayList(Constants.SEAT_NUMBER_ARRAY, seatNumberArray);
+        outState.putString(Constants.COUNTER, String.valueOf(counter));
+        outState.putInt(Constants.TOTAL, total);
     }
 
     private class GridSpacing extends RecyclerView.ItemDecoration{
