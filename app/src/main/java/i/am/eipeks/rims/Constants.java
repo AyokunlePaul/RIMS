@@ -25,4 +25,5 @@ public interface Constants {
     String MINUTE_LOGGED_IN = "minute";
     String CURRENT_VEHICLE_ID = "currentVehicle";
     String CURRENT_TRIP_ID = "currentTripId";
+    String SEAT_NUMBER_ARRAY = "SeatNumber";
 }

@@ -49,6 +49,7 @@ public class Journey extends Fragment implements
         AdapterView.OnItemSelectedListener {
 
     private String driverIntent, vehicleIntent, tripIntent, displacement;
+    private int capacity;
 
     private Spinner departureState, departurePark, routeFrom, routeTo;
     private Button continueToLoad;
@@ -280,6 +281,7 @@ public class Journey extends Fragment implements
                     vehicleWeight.setText(authVehicle.getVehicleWeight());
                     vehicleEngine.setText(authVehicle.getVehicleEngine());
                     vehicleRTSSS.setText(authVehicle.getVehicleRtSss());
+                    capacity = authVehicle.getVehicleCapacity();
 
                     vehicleIntent = String.format("%s_%s_%s_%s_%s_%s_%s",
                             authVehicle.getVehicleName(), authVehicle.getVehicleMake(), authVehicle.getVehicleCapacity(),
@@ -314,12 +316,12 @@ public class Journey extends Fragment implements
 //                        makeToast("Trip registered");
                         SessionUtils.setCurrentTripId(response.body().getTrip().getTripId());
                         addDriver(view);
-                        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
+//                        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
                         break;
                     case 400:
                         continueToLoad.setEnabled(true);
                         continueToLoad.setClickable(true);
-                        makeToast(String.valueOf(response.code()));
+//                        makeToast(String.valueOf(response.code()));
                         if (response.body() != null){
                             if (response.body().getMessage() != null){
                                 Snackbar.make(view, response.body().getMessage(), Snackbar.LENGTH_INDEFINITE)
@@ -407,7 +409,7 @@ public class Journey extends Fragment implements
                     case 200:
                         makeToast("Trip driver registered");
                         startActivity(new Intent(getContext(), RegisterPassenger.class)
-                                .putExtra(Constants.INTENT_CAPACITY_JOURNEY, authVehicle.getVehicleCapacity())
+                                .putExtra(Constants.INTENT_CAPACITY_JOURNEY, capacity)
                                 .putExtra(Constants.INTENT_REGISTRATION_NUMBER_JOURNEY, authVehicle.getVehicleRegistrationNumber())
                                 .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
                                 .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)

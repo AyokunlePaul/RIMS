@@ -72,7 +72,11 @@ public class RegisterPassenger extends AppCompatActivity{
         vehicleIntent = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
         driverIntent = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
         tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-        capacity = Integer.parseInt(getIntent().getStringExtra(Constants.INTENT_CAPACITY_JOURNEY));
+        capacity = getIntent().getIntExtra(Constants.INTENT_CAPACITY_JOURNEY, 0);
+
+        if (savedInstanceState != null){
+            seatNumberArray = savedInstanceState.getIntegerArrayList(Constants.SEAT_NUMBER_ARRAY);
+        }
 
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
@@ -111,7 +115,7 @@ public class RegisterPassenger extends AppCompatActivity{
         currentSeat.setText(String.valueOf(counter));
         capacityTextView.setText(String.valueOf(capacity));
 
-        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
+//        makeToast(String.valueOf(SessionUtils.getCurrentTripId()));
     }
 
     @Override
@@ -355,6 +359,11 @@ public class RegisterPassenger extends AppCompatActivity{
                 }
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putIntegerArrayList(Constants.SEAT_NUMBER_ARRAY, seatNumberArray);
     }
 
     private class GridSpacing extends RecyclerView.ItemDecoration{
