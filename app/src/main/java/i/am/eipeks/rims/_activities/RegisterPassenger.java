@@ -69,12 +69,23 @@ public class RegisterPassenger extends AppCompatActivity{
 
         auth = APIUtils.getAuth();
 
+        TextView capacityTextView = (TextView) findViewById(R.id.capacity);
+        currentSeat = (TextView) findViewById(R.id.seat_count);
+
+        currentSeat.setText(String.valueOf(counter));
+        capacityTextView.setText(String.valueOf(capacity));
+
+        if (savedInstanceState != null){
+            seatNumberArray = savedInstanceState.getIntegerArrayList(Constants.SEAT_NUMBER_ARRAY);
+            currentSeat.setText(savedInstanceState.getString(Constants.COUNTER));
+            total = savedInstanceState.getInt(Constants.TOTAL);
+        }
+
         vehicleIntent = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
         driverIntent = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
         tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
         capacity = getIntent().getIntExtra(Constants.INTENT_CAPACITY_JOURNEY, 0);
 
-        TextView capacityTextView = (TextView) findViewById(R.id.capacity);
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
         passengerName = (EditText) findViewById(R.id.passenger_s_name);
@@ -106,17 +117,6 @@ public class RegisterPassenger extends AppCompatActivity{
                 radio = radioGroup.getCheckedRadioButtonId();
             }
         });
-        currentSeat = (TextView) findViewById(R.id.seat_count);
-
-        currentSeat.setText(String.valueOf(counter));
-        capacityTextView.setText(String.valueOf(capacity));
-
-        if (savedInstanceState != null){
-            seatNumberArray = savedInstanceState.getIntegerArrayList(Constants.SEAT_NUMBER_ARRAY);
-            currentSeat.setText(savedInstanceState.getString(Constants.COUNTER));
-            total = savedInstanceState.getInt(Constants.TOTAL);
-        }
-
     }
 
     @Override
