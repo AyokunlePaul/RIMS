@@ -149,7 +149,7 @@ public class Home extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         }
-    };
+    }; 
     //</editor-fold>
 
 }

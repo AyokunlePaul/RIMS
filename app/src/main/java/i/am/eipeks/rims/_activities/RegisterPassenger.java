@@ -42,7 +42,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterPassenger extends AppCompatActivity{
-    private String vehicleIntent, tripIntent, driverIntent;
+//    private String vehicleIntent, tripIntent, driverIntent;
 
     private int counter =  1, radio, capacity, total = 0;
     private boolean backPressedOnce = false;
@@ -50,7 +50,7 @@ public class RegisterPassenger extends AppCompatActivity{
     private EditText passengerName, passengerAddress, passengerPhone, nextOfKin, kinPhone;
     private TextInputLayout passengerNameTextInput, passengerAddressTextInput, passengerPhoneTextInput, nextOfKinTextInput, kinPhoneTextInput;
     private TextView currentSeat;
-    private MenuItem nextItem, doneItem;
+    private MenuItem nextItem;
 
     private RecyclerView seatNumbers;
 
@@ -72,19 +72,20 @@ public class RegisterPassenger extends AppCompatActivity{
         TextView capacityTextView = (TextView) findViewById(R.id.capacity);
         currentSeat = (TextView) findViewById(R.id.seat_count);
 
-        currentSeat.setText(String.valueOf(counter));
-        capacityTextView.setText(String.valueOf(capacity));
-
         if (savedInstanceState != null){
             seatNumberArray = savedInstanceState.getIntegerArrayList(Constants.SEAT_NUMBER_ARRAY);
             currentSeat.setText(savedInstanceState.getString(Constants.COUNTER));
             total = savedInstanceState.getInt(Constants.TOTAL);
+            capacity = savedInstanceState.getInt(Constants.CAPACITY);
+        } else {
+//            vehicleIntent = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
+//            driverIntent = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
+//            tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
+            capacity = getIntent().getIntExtra(Constants.INTENT_CAPACITY_JOURNEY, 0);
         }
 
-        vehicleIntent = getIntent().getStringExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY);
-        driverIntent = getIntent().getStringExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY);
-        tripIntent = getIntent().getStringExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY);
-        capacity = getIntent().getIntExtra(Constants.INTENT_CAPACITY_JOURNEY, 0);
+        currentSeat.setText(String.valueOf(counter));
+        capacityTextView.setText(String.valueOf(capacity));
 
         loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
@@ -122,8 +123,11 @@ public class RegisterPassenger extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.vehicle_information_menu, menu);
-        doneItem = menu.findItem(R.id.done_menu);
+        MenuItem doneItem = menu.findItem(R.id.done_menu);
         nextItem = menu.findItem(R.id.next_menu);
+        if (total > 0 && !doneItem.isEnabled()){
+            doneItem.setEnabled(true);
+        }
         return true;
     }
 
@@ -154,11 +158,7 @@ public class RegisterPassenger extends AppCompatActivity{
                         .setPositiveButton("Yes, They are", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                startActivity(new Intent(RegisterPassenger.this, RegisterReview.class)
-                                        .putExtra(Constants.INTENT_VEHICLE_INFORMATION_JOURNEY, vehicleIntent)
-                                        .putExtra(Constants.INTENT_TRIP_INFORMATION_JOURNEY, tripIntent)
-                                        .putExtra(Constants.INTENT_DRIVER_INFORMATION_JOURNEY, driverIntent)
-                                );
+                                startActivity(new Intent(RegisterPassenger.this, Main.class));
                             }
                         }).setNegativeButton("No, Take me back", new DialogInterface.OnClickListener() {
                             @Override
@@ -206,9 +206,6 @@ public class RegisterPassenger extends AppCompatActivity{
                     }
                 }
                 return true;
-        }
-        if (total > 0 && !doneItem.isEnabled()){
-            doneItem.setEnabled(true);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -367,6 +364,7 @@ public class RegisterPassenger extends AppCompatActivity{
         outState.putIntegerArrayList(Constants.SEAT_NUMBER_ARRAY, seatNumberArray);
         outState.putString(Constants.COUNTER, String.valueOf(counter));
         outState.putInt(Constants.TOTAL, total);
+        outState.putInt(Constants.CAPACITY, capacity);
     }
 
     private class GridSpacing extends RecyclerView.ItemDecoration{

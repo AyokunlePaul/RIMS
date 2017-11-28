@@ -28,4 +28,5 @@ public interface Constants {
     String SEAT_NUMBER_ARRAY = "SeatNumber";
     String COUNTER = "Counter";
     String TOTAL = "Total";
+    String CAPACITY = "Capacity";
 }

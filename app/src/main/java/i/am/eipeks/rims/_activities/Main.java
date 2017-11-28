@@ -17,9 +17,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Calendar;
 
 import i.am.eipeks.rims.Constants;
 import i.am.eipeks.rims.R;
@@ -62,7 +59,6 @@ public class Main extends AppCompatActivity implements
         TextView owner_s_id = navigationView.getHeaderView(0).findViewById(R.id.owner_s_id);
 
         navigationView.setNavigationItemSelectedListener(this);
-//        navigationView.setItemBackgroundResource(R.color.colorPrimaryDark);
 
         owner_s_id.setText(SessionUtils.getUserId());
         owner_s_info.setText(SessionUtils.getUserLoggedIn());
@@ -168,27 +164,6 @@ public class Main extends AppCompatActivity implements
         drawerLayout.closeDrawer(Gravity.START);
     }
 
-//    private boolean hasTokenExpired(){
-//        if (SessionUtils.getYearLoggedIn() == Calendar.YEAR){
-//            if (SessionUtils.getMonthLoggedIn() == Calendar.MONTH){
-//                if (SessionUtils.getDateLoggedIn() == Calendar.DATE){
-//                    if (SessionUtils.getHourLoggedIn() < Calendar.HOUR){
-//                        if (SessionUtils.getMinuteLoggedIn() == Calendar.MINUTE){
-//                            return true;
-//                        } else if (SessionUtils.getMinuteLoggedIn() < Calendar.MINUTE){
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                    return true;
-//                }
-//                return true;
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -204,6 +179,5 @@ public class Main extends AppCompatActivity implements
         SessionUtils.setLoggedIn(false);
         startActivity(new Intent(this, Login.class));
     }
-
 }
 
